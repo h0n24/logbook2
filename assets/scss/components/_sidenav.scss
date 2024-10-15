@@ -1,5 +1,50 @@
 @use "abstracts/color";
 
+html .mat-body[style] {
+  .sidenav-new {
+    background-color: color.$toolbars;
+    border-right: none;
+  }
+
+  .ng-star-inserted .sidenav-new .sidenav-new__content {
+    width: 48px;
+    padding: 10px 0px;
+
+    .mat-icon {
+      margin-left: 5px;
+      margin-right: 11px;
+    }
+  }
+
+  .mat-expansion-panel {
+    background-color: color.$toolbars;
+  }
+
+  .mat-accordion.mat-accordion_sidenav-new
+    .mat-expansion-panel.is-active
+    .mat-expansion-panel-header {
+    background-color: rgb(0, 106, 208, 0.1);
+    border-radius: 0px;
+    &:before {
+      content: " ";
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 0px;
+      border: none;
+      width: 2px;
+      height: 100%;
+      background-color: color.$primary;
+      z-index: 1;
+    }
+
+    .mat-icon {
+      color: color.$primary;
+    }
+  }
+}
+
 mat-accordion {
   display: flex;
   flex-direction: column;

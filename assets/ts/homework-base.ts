@@ -550,7 +550,7 @@ function createAnswersAutocomplete(target, skipFocus = false) {
 }
 
 export function enhanceHomeworkAssessment(homework: Element, single?: boolean) {
-  console.log("enhanceHomeworkAssessment");
+  // console.log("enhanceHomeworkAssessment");
 
   if (homework === null) return;
   // prevent doing this multiple times by adding a data-attribute alreadyEnhanced

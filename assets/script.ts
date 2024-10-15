@@ -60,7 +60,7 @@ function anyPageLoaded(url) {
 }
 
 function homeworkPageLoaded() {
-  console.log("Domácí úkoly, stránka je načtená");
+  // console.log("Domácí úkoly, stránka je načtená");
   homeworkMulti();
 }
 

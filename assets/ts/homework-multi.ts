@@ -38,7 +38,7 @@ function processHomeworksOnScroll() {
 
 export function homeworkMulti() {
   try {
-    console.log("homeworkAutomation");
+    // console.log("homeworkAutomation");
     processHomeworksOnScroll();
   } catch (error) {
     console.log(error);

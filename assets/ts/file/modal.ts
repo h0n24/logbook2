@@ -666,7 +666,7 @@ document.addEventListener("click", function (event) {
 });
 
 export function fileModal() {
-  console.log("fileModal");
+  // console.log("fileModal");
 
   // @ts-ignore
   window.customData = {
