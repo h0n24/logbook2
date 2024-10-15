@@ -12,12 +12,11 @@ const filesAllowedToShowAsText = [
   ".md",
 ];
 const filesAllowedToShowAsImage = [".png", ".jpg", ".jpeg", ".gif", ".svg"];
-let zipBypassModal = false; // allow at the beginning to open the file
-let zipBypassModalFirstRun = true; // allow at the beginning to open the file
+let zipBypassModal = false; // allow at the beginning to open the file TODO: remove
+let zipBypassModalFirstRun = true; // allow at the beginning to open the file TODO: remove
 
 let focusedElement = document.activeElement as HTMLElement;
-let lastFocusedAutocompleteAnswer = null as any;
-let keyboardShortcutsForNewModals = null as any;
+let keyboardShortcutsForNewModals = null as any; // TODO ADD: !!!
 
 function eventListenerForNewModal(event) {
   if (event.key === "Escape") {
@@ -184,26 +183,35 @@ function createModalLayout(data: any, url: any, type: any, filename: any = "") {
   updateDownloadButtonData(download, url, filename);
 
   // Add event listener to the download button
-  download.addEventListener("click", function (event) {
-    event.preventDefault();
+  if (!download.hasAttribute("data-listener-added")) {
+    download.addEventListener("click", function (event) {
+      event.preventDefault();
 
-    // Fetch the file and download it directly
-    fetch(url)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = filename || "file";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
-      })
-      .catch((error) => {
-        console.error("Error downloading the file:", error);
-        alert("Chyba při stahování souboru.");
-      });
-  });
+      // Get the current href and download attributes from the button
+      const currentUrl = download.href;
+      const currentFilename = download.getAttribute("download") || "file";
+
+      // Fetch the file and download it directly
+      fetch(currentUrl)
+        .then((response) => response.blob())
+        .then((blob) => {
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = currentFilename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(link.href);
+        })
+        .catch((error) => {
+          console.error("Error downloading the file:", error);
+          alert("Chyba při stahování souboru.");
+        });
+    });
+
+    // Mark that the listener has been added
+    download.setAttribute("data-listener-added", "true");
+  }
 
   // Add event listeners to close the modal
   close.addEventListener("click", eventCloseNewModal);
@@ -277,9 +285,9 @@ function updateDownloadButtonData(
   filename: any
 ) {
   download.href = url;
-  download.setAttribute("download", filename); // Force download
-  // Removed download.target = '_blank';
+  download.setAttribute("download", filename || "file"); // To force download
 
+  // Update button text and title
   if (filename === "") {
     download.innerHTML = "Stáhnout původní soubor";
   } else {

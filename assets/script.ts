@@ -56,7 +56,7 @@ document.documentElement.setAttribute("lang", "cs-CZ");
 // }
 
 function anyPageLoaded(url) {
-  console.log("Stránka je načtená", url);
+  console.log("Stránka je načtená: ", url);
 }
 
 function homeworkPageLoaded() {
@@ -77,7 +77,7 @@ function observeProgressBar(func, navigationId) {
           // Progress bar has been removed
           progressBarObserver.disconnect();
           window.progressBarObserver = null;
-          console.log("mat-progress-bar has been removed from the DOM");
+          // console.log("mat-progress-bar has been removed from the DOM");
 
           // Check if this navigation has already been handled
           if (window.lastExecutedNavigationId !== navigationId) {
@@ -99,9 +99,9 @@ function observeProgressBar(func, navigationId) {
 
       // Check if this navigation has already been handled
       if (window.lastExecutedNavigationId !== navigationId) {
-        console.log(
-          "mat-progress-bar is not present. Executing function immediately."
-        );
+        // console.log(
+        //   "mat-progress-bar is not present. Executing function immediately."
+        // );
         func();
         window.lastExecutedNavigationId = navigationId;
       }
@@ -137,11 +137,11 @@ function observeProgressBar(func, navigationId) {
         // Navigation has started
         window.isLoading = true;
         window.isNewNavigation = true;
-        console.log("Navigation detected. Loading started.");
+        // console.log("Navigation detected. Loading started.");
       } else if (!progressBar && window.isLoading) {
         // Navigation has completed
         window.isLoading = false;
-        console.log("Navigation completed.");
+        // console.log("Navigation completed.");
 
         // Handle navigation completion
         handleUrlChange(lastUrl);
