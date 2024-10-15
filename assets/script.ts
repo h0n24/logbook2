@@ -9,10 +9,12 @@
 import { homeworkMulti } from "./ts/homework-multi";
 // import { manipulateWithWindowOpen } from "./ts/homework-modal";
 
+import { presence } from "./ts/attendance/attendance";
+
 // import { autoLogin, onLogout } from "./ts/autoLogin";
 // import { onContextMenu, addInfoForMenu } from "./ts/contextMenu";
 // import { checkPing } from "./ts/checkPing";
-// import { presenceEnhancements } from "./ts/presence";
+
 // import { homeworkEnhancements } from "./ts/presenceAddHomework";
 // import { addRightClickStar } from "./ts/contextMenuStar";
 // import { scheduleEnhancements } from "./ts/schedule";
@@ -62,6 +64,10 @@ function anyPageLoaded(url) {
 function homeworkPageLoaded() {
   // console.log("Domácí úkoly, stránka je načtená");
   homeworkMulti();
+}
+
+function attendancePageLoaded() {
+  console.log("Přítomnost, stránka je načtená");
 }
 
 function observeProgressBar(func, navigationId) {
@@ -178,6 +184,8 @@ function handleUrlChange(url) {
 
     if (url === "https://lb.itstep.org/homework") {
       observeProgressBar(homeworkPageLoaded, window.navigationId);
+    } else if (url === "https://lb.itstep.org/attendance") {
+      observeProgressBar(attendancePageLoaded, window.navigationId);
     } else {
       observeProgressBar(() => anyPageLoaded(url), window.navigationId);
     }

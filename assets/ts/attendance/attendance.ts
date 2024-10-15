@@ -1,4 +1,4 @@
-import * as incl from "./_incl";
+import * as incl from "../_incl";
 
 // TODO: refactor this file into separate files
 
@@ -102,7 +102,7 @@ function whenClickedOnPresenceTh() {
 
 function addContextMenuForEachSelect() {
   try {
-    const selects = document.querySelectorAll(".presentr-classWork md-select");
+    const selects = document.querySelectorAll("mat-form-field");
 
     selects.forEach((select) => {
       select.addEventListener("contextmenu", addContextMenu);
@@ -635,8 +635,8 @@ function printTable() {
   topPanel.appendChild(printButton);
 }
 
-// add right click to menu
-export function presenceEnhancements(state) {
+// TODO: rework this whole function
+function presenceEnhancements(state) {
   if (state !== "presents") return;
 
   const hash = window.location.hash;
@@ -695,4 +695,10 @@ export function presenceEnhancements(state) {
       correctBugTabsActiveWhenBreak();
     } catch (error) {}
   }, 200);
+}
+
+export function presence() {
+  console.log("jsem tu");
+
+  addContextMenuForEachSelect();
 }
