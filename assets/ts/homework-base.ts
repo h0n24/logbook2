@@ -1,3 +1,5 @@
+// file name: homework-base.ts
+
 import { vocative } from "./vocative";
 import * as zip from "@zip.js/zip.js";
 
@@ -94,17 +96,20 @@ function shouldAddSpace(character, isStart) {
 }
 
 function betterButtonsRework(homework: Element) {
-  // add new class .hw-better-buttons
+  // Add new class .hw-better-buttons
   homework.classList.add("hw-better-buttons");
 
   try {
-    // find .mat-icon
+    // Find the lector button
     let lectorWrap = homework.querySelector(
       ".mdc-icon-button-xs"
     ) as HTMLDivElement;
-    // add text to it as "Stáhnout zadání od učitele"
+
+    // Set the button text
     lectorWrap.innerHTML = "Zadání od lektora";
-    // remove all classes and set a new one .hw-better-buttons__lector
+    lectorWrap.title = "Levé tlačítko: modální okno, pravé tlačítko: stáhnout";
+
+    // Remove existing classes and add new ones
     lectorWrap.classList.remove(...lectorWrap.classList);
     lectorWrap.classList.add(
       "hw-better-buttons__lector",
@@ -113,13 +118,33 @@ function betterButtonsRework(homework: Element) {
       "mat-mdc-outlined-button"
     );
 
-    // find .mdc-icon-button-xs
+    // Add the new attribute `data-filename` to `lectorWrap`
+    const lectorFilename = extractFilenameFromLector(homework);
+    lectorWrap.setAttribute("data-filename", lectorFilename);
+
+    // Add right-click (contextmenu) event listener to lectorWrap
+    lectorWrap.addEventListener("contextmenu", function (event) {
+      event.preventDefault(); // Prevent the context menu from showing
+      // Send a message to bypass the modal
+      window.postMessage({ type: "BY_PASS_MODAL" }, "*");
+      // Programmatically trigger the click event on the button
+      setTimeout(() => {
+        lectorWrap.click();
+      }, 10); // Delay in milliseconds
+    });
+
+    // Find the student button
     let studentWrap = homework.querySelector(
       ".mat-mdc-icon-button"
     ) as HTMLDivElement;
-    // add text to it as "Stáhnout studentovu práci"
+
+    if (!studentWrap) return;
+
+    // Set the button text
     studentWrap.innerHTML = "Stáhnout práci studenta";
-    // remove all classes and set a new one .hw-better-buttons__student
+    studentWrap.title = "Levé tlačítko: modální okno, pravé tlačítko: stáhnout";
+
+    // Remove existing classes and add new ones
     studentWrap.classList.remove(...studentWrap.classList);
     studentWrap.classList.add(
       "hw-better-buttons__student",
@@ -128,7 +153,71 @@ function betterButtonsRework(homework: Element) {
       "mat-mdc-outlined-button",
       "mat-primary"
     );
-  } catch (error) {}
+
+    // Add the new attribute `data-filename` to `studentWrap`
+    const studentFilename = extractFilenameFromStudent(homework);
+    studentWrap.setAttribute("data-filename", studentFilename);
+
+    // Add right-click (contextmenu) event listener to studentWrap
+    studentWrap.addEventListener("contextmenu", function (event) {
+      event.preventDefault(); // Prevent the context menu from showing
+      // Send a message to bypass the modal
+      window.postMessage({ type: "BY_PASS_MODAL" }, "*");
+      // Programmatically trigger the click event on the button
+      setTimeout(() => {
+        studentWrap.click();
+      }, 10); // Delay in milliseconds
+    });
+  } catch (error) {
+    console.error("Error in betterButtonsRework:", error);
+  }
+}
+
+// Helper function to extract filename for lector button
+function extractFilenameFromLector(homework: Element): string {
+  const parent = homework.querySelector(
+    ".hw-better-buttons__lector"
+  )?.parentElement;
+  if (parent) {
+    const span = parent.querySelector("span.mx-2") as HTMLSpanElement;
+    if (span) {
+      const text = span.textContent || "Zadani_od_lektora";
+      return sanitizeFilename(text);
+    }
+  }
+  return "Zadani_od_lektora";
+}
+
+// Helper function to extract filename for student button
+function extractFilenameFromStudent(homework: Element): string {
+  const appHomeworkReview = homework.querySelector("app-homework-review");
+
+  if (appHomeworkReview) {
+    const div = appHomeworkReview.querySelector(
+      "div.mb-1.ng-star-inserted .text-dark"
+    );
+
+    const h2 = appHomeworkReview.querySelector("h2");
+
+    if (div && h2) {
+      let studentInfo = h2.textContent?.trim() || "Student";
+      let dateInfo = div.textContent?.trim() || "";
+      // remove dots from dateInfo
+      dateInfo = dateInfo.replace(/\./g, "");
+
+      let text = `${studentInfo}_${dateInfo}`;
+      return sanitizeFilename(text);
+    }
+  }
+  return "Prace_studenta";
+}
+
+// Function to sanitize filenames
+function sanitizeFilename(name: string): string {
+  return name
+    .replace(/[<>:"/\\|?*\x00-\x1F]/g, "")
+    .trim()
+    .replace(/\s+/g, "_");
 }
 
 function createUrlfromText(originalText: any) {

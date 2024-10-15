@@ -15,7 +15,8 @@
     "tabs",
     "declarativeNetRequest",
     "declarativeNetRequestFeedback",
-    "storage"
+    "storage",
+    "downloads"
   ],
   "declarative_net_request": {
     "rule_resources": [

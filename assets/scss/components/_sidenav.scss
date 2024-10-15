@@ -1,292 +1,32 @@
 @use "abstracts/color";
 
-html body.main main.content .open-menu-block {
-  // repair offset bug
-  top: 0;
-  width: 3rem;
+mat-accordion {
+  display: flex;
+  flex-direction: column;
+}
 
-  &:hover {
-    cursor: w-resize;
-    background-color: rgba(color.$primary, 10%);
+mat-expansion-panel:has(#mat-expansion-panel-header-0),
+mat-expansion-panel:has(#mat-expansion-panel-header-3),
+mat-expansion-panel:has(#mat-expansion-panel-header-5),
+mat-expansion-panel:has(#mat-expansion-panel-header-7),
+mat-expansion-panel:has(#mat-expansion-panel-header-8),
+mat-expansion-panel:has(#mat-expansion-panel-header-9) {
+  order: 1;
+  .mat-icon {
+    color: rgb(24, 24, 27, 0.3);
   }
 }
 
-// restyle sidenavbar
-html body.main main.content md-sidenav {
-  background-color: color.$toolbars;
-  color: color.$dark !important;
-  padding-bottom: 0;
-  width: auto;
-
-  &.main-sidenav.md-closed {
-    width: 3rem;
-  }
-
-  // avatar part
-  md-content {
-    min-height: calc(100vh - 130px);
-
-    & > span {
-      display: flex;
-      align-items: center;
-      margin: 0.5rem 1rem;
-    }
-
-    .user_name {
-      color: #252525;
-      margin: 0;
-      text-align: left;
-      font-size: 1rem;
-      padding-left: 5px;
-      padding-left: calc(1rem - 5px);
-      width: auto;
-    }
-
-    .avatar-holder {
-      height: 2rem;
-      width: 2rem;
-      border-radius: 2rem;
-      margin: 0;
-      margin-left: -5px;
-    }
-
-    .avatar-holder .avatar {
-      height: auto !important;
-      width: auto !important;
-    }
-
-    ul.main-menu {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-
-      // gaps between
-
-      li[ng-class="{active: activeNav == 'students.list'}"] {
-        margin-top: 0.5rem;
-        order: 50;
-
-        position: relative;
-
-        &:before {
-          content: "";
-          position: absolute;
-          display: block;
-          top: 0;
-          left: 0;
-          width: calc(100% + 5px);
-          height: 1px;
-          border-top: 1px solid darken(color.$toolbars, 10%);
-          margin-left: -5px;
-          margin-top: -0.5rem;
-        }
-      }
-
-      li[ng-class="{active: activeNav == 'groupsPage'}"] {
-        order: 51;
-      }
-
-      li[ng-class="{active: activeNav == 'classWork'}"] {
-        order: 52;
-      }
-
-      li[ng-class="{active: activeNav == 'traffic'}"] {
-        order: 53;
-      }
-
-      li[ng-class="{active: activeNav == 'report'}"] {
-        margin-top: 0.5rem;
-        order: 70;
-
-        position: relative;
-
-        &:before {
-          content: "";
-          position: absolute;
-          display: block;
-          top: 0;
-          left: 0;
-          width: calc(100% + 5px);
-          height: 1px;
-          border-top: 1px solid darken(color.$toolbars, 10%);
-          margin-left: -5px;
-          margin-top: -0.5rem;
-        }
-      }
-
-      // reposition left menu
-      li[ng-class="{active: activeNav == 'tasks'}"] {
-        order: 95;
-      }
-
-      li[ng-class="{active: activeNav == 'content_author'}"] {
-        order: 96;
-      }
-
-      li[ng-class="{active: activeNav == 'exams'}"] {
-        order: 97;
-      }
-
-      li[ng-class="{active: activeNav == 'news' || activeNav == undefined}"] {
-        order: 98;
-      }
-      li[ng-class="{active: activeNav == 'portfolio'}"] {
-        order: 99;
-      }
-
-      &.hidden-menu {
-        li[ng-class="{active: activeNav == 'tasks'}"],
-        li[ng-class="{active: activeNav == 'content_author'}"],
-        li[ng-class="{active: activeNav == 'exams'}"],
-        li[ng-class="{active: activeNav == 'news' || activeNav == undefined}"],
-        li[ng-class="{active: activeNav == 'portfolio'}"] {
-          visibility: hidden;
-        }
-      }
-    }
-
-    ul.main-menu li {
-      height: auto;
-      // margin: 0.5rem 0;
-      // margin-bottom: 0.5rem;
-      margin: 0;
-      padding-top: 0.5rem;
-      padding-bottom: 0.5rem;
-      cursor: pointer;
-      visibility: visible;
-
-      a {
-        color: #252525;
-        left: 2rem;
-        height: 2rem;
-        line-height: 2rem;
-        text-decoration: none;
-
-        &:hover {
-          color: #252525;
-        }
-
-        &:before {
-          left: calc(-2rem - 2px);
-          width: 1.5rem;
-          height: 1.5rem;
-        }
-
-        // solves click through problems when missing a tag
-        &:after {
-          display: block;
-          content: "";
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          top: -0.1rem;
-          background: transparent;
-          left: -3rem;
-          width: calc(100% + 3rem + 1rem);
-          height: calc(100% + 1.2rem);
-        }
-      }
-
-      &:hover {
-        // background-color: #edece8 !important;
-        background-color: rgba(color.$primary, 10%) !important;
-      }
-
-      &.active {
-        background-color: #e0e0dd;
-        border-color: color.$primary !important;
-
-        a {
-          color: #252525;
-
-          &:hover {
-            color: darken(#252525, 10%);
-          }
-        }
-      }
-      .orange-count {
-        background-color: color.$orange-500;
-        border-radius: 3rem;
-        line-height: 1rem;
-        padding: 0.2rem 0.4rem !important;
-        font-size: 0.8rem;
-        font-weight: 500;
-        margin: 0;
-        margin-left: 0.25rem;
-        color: color.$dark !important;
-      }
-    }
-
-    ul.main-menu li a:before {
-      filter: invert(100%);
-      opacity: 0.7;
-    }
-
-    ul.hidden-menu li .orange-count {
-      color: #252525;
-      font-weight: bold;
-    }
-
-    ul.main-menu li {
-      width: auto;
-    }
-  } // end of md-content
-
-  .layout_lang_change {
-    margin-top: 0.5rem;
-  }
-
-  ul.main-info {
-    width: auto;
-  }
-
-  .langs_li {
-    padding-left: 1rem;
-
-    a.btn-floating.btn-large {
-      width: 2rem;
-      height: 2rem;
-      line-height: 2rem;
-      margin-right: 1rem;
-      box-shadow: none;
-
-      i {
-        font-size: 1rem;
-      }
-    }
-
-    md-sidenav {
-      left: 0;
-      overflow: scroll;
-      width: 100%;
-    }
-
-    .clearCache {
-      font-size: 0.8rem;
-      line-height: 2rem;
-      height: 2rem;
-      color: color.$dark !important;
-      background: transparent;
-      box-shadow: none;
-      border: 1px solid rgba(color.$dark, 0.1);
-    }
-  }
-
-  .support,
-  .instruction {
-    font-size: 0.8rem;
-  }
-
-  ul.main-info a {
-    color: color.$dark !important;
-
-    &:hover {
-      text-decoration: none;
-    }
-  }
-
-  // chevron_left
-  & > i.material-icons {
-    display: none;
-  }
+mat-expansion-panel:has(#mat-expansion-panel-header-0):before {
+  content: " ";
+  display: block;
+  position: relative;
+  top: 0;
+  left: 0;
+  padding-top: 1rem;
+  // padding-bottom: 1rem;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  color: rgb(24, 24, 27, 0.5);
 }

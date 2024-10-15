@@ -1,3 +1,5 @@
+// file name: modal.ts
+
 import * as zip from "@zip.js/zip.js";
 import { debounce } from "../_incl";
 
@@ -285,7 +287,7 @@ function updateDownloadButtonData(
   filename: any
 ) {
   download.href = url;
-  download.setAttribute("download", filename || "file"); // To force download
+  download.setAttribute("download", filename || "file"); // Use the provided filename
 
   // Update button text and title
   if (filename === "") {
@@ -293,12 +295,11 @@ function updateDownloadButtonData(
   } else {
     let shorterFilename = filename;
     if (filename.length > 30) {
-      // Shorten filename from the middle
       const firstHalf = filename.slice(0, 15);
       const secondHalf = filename.slice(-15);
       shorterFilename = firstHalf + " … " + secondHalf;
     }
-    download.title = `Celý název souboru: ${filename}`;
+    download.title = `Celý vygenerovaný název souboru: ${filename}\n\nPro stáhnutí s původním názvem zavřete toto okno a klikněte na tlačítko pravým tlačítkem myši.`;
     download.innerHTML = `Stáhnout soubor <span>${shorterFilename}</span>`;
   }
 }
@@ -353,7 +354,11 @@ function createTheadForZipFileTable() {
   return thead;
 }
 
-async function readZipFile(blob, originalFileUrl) {
+async function readZipFile(
+  blob: Blob,
+  originalFileUrl: string,
+  filename: string
+) {
   const reader = new FileReader();
   reader.readAsArrayBuffer(blob);
 
@@ -362,12 +367,13 @@ async function readZipFile(blob, originalFileUrl) {
     const uint8Array = new Uint8Array(arrayBuffer);
     const zipReader = new zip.ZipReader(new zip.Uint8ArrayReader(uint8Array));
 
-    // save zipReaderData to global variable
+    // Save data to global variables
     // @ts-ignore
     window.zipReaderData = zipReader;
-
     // @ts-ignore
     window.zipOriginalFileUrl = originalFileUrl;
+    // @ts-ignore
+    window.zipOriginalFilename = filename;
 
     createZipFileTable();
   });
@@ -375,10 +381,11 @@ async function readZipFile(blob, originalFileUrl) {
 
 function createZipFileTable() {
   // @ts-ignore
-  let zipReader2 = window.zipReaderData;
-
+  const zipReader2 = window.zipReaderData;
   // @ts-ignore
-  let originalFileUrl = window.zipOriginalFileUrl;
+  const originalFileUrl = window.zipOriginalFileUrl;
+  // @ts-ignore
+  const filename = window.zipOriginalFilename || "file";
 
   const entriesTable = document.createElement("table");
   entriesTable.id = "zip-entries-table";
@@ -389,9 +396,9 @@ function createZipFileTable() {
 
   zipReader2.getEntries().then(function (entries) {
     entries.forEach(function (entry) {
-      if (entry.directory) return; // skip directories
-      if (entry.filename.startsWith("__MACOSX")) return; // skip mac os x files
-      if (entry.filename.includes(".DS_Store")) return; // skip .DS_Store files
+      if (entry.directory) return;
+      if (entry.filename.startsWith("__MACOSX")) return;
+      if (entry.filename.includes(".DS_Store")) return;
 
       createTrForZipFileTable(entry, tbody);
     });
@@ -399,7 +406,7 @@ function createZipFileTable() {
 
   entriesTable.appendChild(thead);
   entriesTable.appendChild(tbody);
-  createModalForFiles(entriesTable, originalFileUrl, "zip", "", false);
+  createModalForFiles(entriesTable, originalFileUrl, "zip", filename, false);
 }
 
 function toCzechNumber(number) {
@@ -586,17 +593,19 @@ function whenOpeningLinkWithFile({
   windowFeatures,
 }: {
   urlText: string;
-  original: ((
-    url?: string | URL,
-    target?: string,
-    features?: string
-  ) => Window | null) &
-    ((url?: string | URL, target?: string, features?: string) => Window | null);
+  original: any;
   url: string | URL | undefined;
   windowName: string | undefined;
   windowFeatures: string | undefined;
 }) {
-  // fetch the file
+  console.log("whenOpeningLinkWithFile", urlText);
+
+  // Use the last clicked filename
+  let filename = lastClickedFilename || "file";
+
+  console.log("filename", filename);
+
+  // Fetch the file
   fetch(urlText, {
     method: "GET",
     headers: {
@@ -607,29 +616,54 @@ function whenOpeningLinkWithFile({
       return response.blob();
     })
     .then((blob) => {
-      // create a url for the file
+      // Handle different file types
       if (blob.type.includes("text")) {
-        // read contents of the blob via FileReader
         const reader = new FileReader();
 
         reader.addEventListener("load", function () {
           const data = reader.result;
-          console.log("data", data);
-          createModalForFiles(data, urlText, "text");
+          createModalForFiles(data, urlText, "text", filename);
         });
 
         reader.readAsText(blob);
       } else if (blob.type.includes("pdf")) {
         const url = URL.createObjectURL(blob);
-        createModalForFiles(url, urlText, "pdf");
+        createModalForFiles(url, urlText, "pdf", filename);
       } else if (blob.type.includes("zip")) {
-        readZipFile(blob, urlText);
+        readZipFile(blob, urlText, filename);
       } else {
-        // returning original function for other type of files (images, unreadable files, etc.)
-        return original(url, windowName, windowFeatures);
+        // For other types, display the modal with the appropriate filename
+        const url = URL.createObjectURL(blob);
+        createModalForFiles(url, urlText, blob.type.split("/")[1], filename);
       }
+    })
+    .catch((error) => {
+      console.error("Error fetching the file:", error);
     });
 }
+
+// Map to store URLs to filenames
+const urlToFilenameMap = new Map<string, string>();
+
+// Global variable to store the last clicked filename
+let lastClickedFilename = "";
+
+// Add event listener to capture clicks on the document
+document.addEventListener("click", function (event) {
+  const target = event.target as HTMLElement;
+  // Check if the clicked element is one of the buttons or inside it
+  const button = target.closest(
+    ".hw-better-buttons__lector, .hw-better-buttons__student"
+  ) as HTMLElement;
+
+  if (button) {
+    // Get the filename from data-filename attribute
+    const filename = button.getAttribute("data-filename") || "file";
+    // Update the last clicked filename
+    lastClickedFilename = filename;
+    console.log("Clicked button with filename:", filename);
+  }
+});
 
 export function fileModal() {
   console.log("fileModal");
