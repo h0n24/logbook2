@@ -1,0 +1,13 @@
+@use "abstracts/color";
+@use "abstracts/style";
+
+// ads page aka "news"
+html .ads.content-inner {
+  padding: 2rem;
+  gap: 2rem;
+
+  .tabMenu {
+    padding: 0 !important;
+    max-height: calc(100vh - 6rem);
+  }
+}

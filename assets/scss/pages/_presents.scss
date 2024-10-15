@@ -1,0 +1,1463 @@
+@use "abstracts/color";
+@use "abstracts/style";
+@use "abstracts/include";
+
+// TODO: colors to abstracts
+
+html main.content .presents {
+  padding: 3rem;
+  margin: 0;
+
+  .add-material {
+    float: none;
+    margin: 0;
+    width: auto;
+    // margin-top: -3rem;
+    // height: 2rem;
+    display: inline-block;
+    margin-bottom: 1rem !important;
+    transition: all 0.3s ease-in;
+  }
+
+  // no more uppercase
+  .add-materials-btns {
+    // margin-top: 1rem;
+    // margin-top: -2rem;
+    margin-top: 0;
+    display: inline-block;
+    width: auto;
+    // height: 2rem;
+    height: fit-content;
+    padding: 0 !important;
+
+    a {
+      text-transform: initial;
+      padding: style.$button-padding;
+      font-size: 1rem;
+      float: none;
+      font-weight: style.$button-weight;
+      border-radius: style.$border-radius;
+      line-height: style.$button-lheight !important;
+      height: style.$button-height !important;
+      border: style.$button-border;
+
+      &:first-letter {
+        text-transform: capitalize;
+      }
+    }
+  }
+
+  // vrchní panel
+  .topPanel .interna-wrap {
+    padding: 0;
+    padding-top: 2rem;
+  }
+  .topPanel {
+    text-align: left;
+    padding: 0;
+    margin-bottom: 1rem;
+
+    display: grid;
+    justify-content: end;
+    grid-template-columns: auto 1fr auto;
+    grid-gap: 1rem;
+
+    .paddingLeft {
+      font-size: 1.5rem;
+      color: color.$dark !important;
+    }
+
+    .font-for-apple {
+      font-family: inherit;
+      font-variant: initial;
+    }
+  }
+
+  // tlačítka na vrchním panelu
+  .dialog-demo-content,
+  .set-date {
+    position: relative;
+  }
+
+  .dialog-demo-content {
+    order: 2;
+  }
+
+  .set-date {
+    top: 0;
+    order: 1;
+  }
+
+  span[ng-if="countRequestPresents > 0"] {
+    margin-bottom: 1rem;
+    display: inline-block;
+  }
+
+  div[ng-show="groupCount < 1 && !not_student"] {
+    margin-top: -2rem;
+  }
+
+  .dialog-demo-content button,
+  .set-date button {
+    width: auto;
+    text-transform: initial;
+    font-weight: style.$button-weight;
+    padding: style.$button-padding;
+    height: style.$button-height;
+    background-color: color.$primary !important;
+    border: style.$button-border;
+    color: #fff;
+  }
+
+  // ikonka u jednotlivých hodin
+  .pars li {
+    position: relative;
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .pars li::after,
+  .pars li::before {
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translate(50%, -50%);
+    border-radius: 0.5rem;
+    box-shadow: 0 0 0 0.1rem #fff;
+    content: "";
+    display: block;
+    opacity: 0;
+
+    height: 0.5rem;
+    width: 0.5rem;
+  }
+
+  .pars li.show-badge-diamonds::before {
+    animation: fadeIn 0.2s linear 1s forwards;
+    // opacity: 1;
+    background-color: color.$inputs;
+    transform: translate(-0.25rem, -0.25rem);
+    z-index: 1;
+  }
+
+  .pars li.show-badge-work::after {
+    animation: fadeIn 0.2s linear 1s forwards;
+    // opacity: 1;
+    background-color: color.$primary;
+    transform: translate(-0.25rem, -0.25rem);
+    z-index: 2;
+  }
+
+  // výběr jednotlivých hodin
+  ul.pars {
+    height: 3rem;
+    margin: 0;
+    margin-bottom: 3rem !important;
+    user-select: none;
+
+    // test
+    display: inline-flex;
+    vertical-align: middle;
+
+    li {
+      margin-right: 0;
+    }
+
+    &:empty,
+    &:not(:has(li)) {
+      display: none;
+    }
+  }
+
+  .pars li,
+  .groups li {
+    padding: 0;
+    width: auto;
+    margin-right: 0.5rem;
+    user-select: none;
+    min-width: auto;
+    box-sizing: border-box;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  .pars li a,
+  .groups li a {
+    background-color: #fff;
+    color: color.$primary !important;
+    border: 0.05rem solid color.$primary !important;
+    border-radius: style.$border-radius;
+    user-select: none;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    box-sizing: border-box;
+  }
+
+  .pars li:not(:last-child) > a {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none !important;
+  }
+
+  .pars li:not(:first-child) > a {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .pars li:not(:first-child) {
+    margin-left: -1px;
+  }
+
+  .pars li.active a,
+  .groups li.active a {
+    background-color: color.$primary !important;
+    border: 0.05rem solid color.$primary !important;
+    color: #fff !important;
+    pointer-events: none;
+  }
+
+  .group {
+    color: color.$dark !important;
+
+    .groupName {
+      font-weight: 500;
+    }
+
+    .specName {
+      margin-left: 1rem;
+    }
+  }
+
+  .table-wrapper {
+    padding: 0 !important;
+  }
+
+  .interna-wrap {
+    padding: 0;
+  }
+
+  .teacherInit {
+    // margin-bottom: 3rem;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    max-width: 600px;
+    overflow: visible;
+
+    // rework
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .check-techers-wrap {
+      float: none;
+      width: auto;
+      padding: 0;
+      order: 2;
+
+      .check-techers {
+        margin-top: 0;
+        display: flex;
+        // gap: 1rem;
+        gap: 1.5rem;
+
+        p {
+          margin: 0 !important;
+          display: flex;
+          float: none;
+          // margin-right: 1rem !important;
+        }
+
+        input {
+          // margin-right: -1rem;
+          display: none;
+        }
+
+        label {
+          // padding-left: 1.5rem;
+          padding-left: 0;
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          align-content: center;
+          gap: 0.5rem;
+        }
+
+        label:before {
+          position: relative;
+          display: inline-block;
+          border-color: color.$primary !important;
+          width: 1rem;
+          height: 1rem;
+          border-radius: 1rem;
+        }
+
+        input:checked + label:before {
+          // width: 1rem;
+          // height: 1rem;
+          // border-radius: 1rem;
+          background-color: color.$primary !important;
+        }
+
+        label:after {
+          display: none;
+        }
+      }
+    }
+    .teacherTextarea {
+      float: none;
+      width: auto;
+      // margin-top: 4rem;
+      // margin-top: 3.5rem;
+      margin-top: 0;
+      padding: 0;
+      order: 3;
+
+      .theme-label {
+        padding-right: 0;
+        font-size: 1rem;
+        font-weight: 300;
+        // margin-bottom: 0.5rem;
+        margin-bottom: 0;
+
+        .lesson-theme.ng-hide + .material-icons {
+          display: none;
+        }
+      }
+
+      div[ng-show="check_theme==1"][aria-hidden="false"] {
+        margin-top: 0.5rem;
+      }
+
+      .textarea-wrap {
+        float: none;
+        width: auto;
+        margin-bottom: 0.5rem;
+      }
+
+      .button-wrap {
+        padding: 0;
+        width: auto;
+        float: none;
+        display: flex;
+        gap: 0.5rem;
+
+        .buttons {
+          padding: 0;
+          width: auto;
+          float: none;
+
+          .md-button {
+            width: fit-content;
+            font-weight: style.$button-weight;
+            border-radius: style.$border-radius;
+            line-height: style.$button-lheight !important;
+            height: style.$button-height !important;
+            min-width: auto;
+            padding: style.$button-padding;
+            border: style.$button-border;
+          }
+
+          &:last-child {
+            .md-button {
+              background-color: #fff !important;
+              color: color.$primary !important;
+              border: style.$button-border !important;
+            }
+          }
+        }
+      }
+
+      textarea#theme {
+        height: 3rem;
+        padding: 0.25rem 0.4rem;
+        border: 0.05rem solid color.$inputs;
+        border-radius: 0.1rem;
+        transition: background 0.2s, border 0.2s, box-shadow 0.2s, color 0.2s;
+        box-sizing: border-box;
+        border-radius: style.$border-radius;
+
+        &:focus {
+          border-color: color.$primary !important;
+          box-shadow: 0 0 0 0.1rem rgba(color.$primary, 0.2);
+          // color: color.$primary !important;
+        }
+      }
+    }
+
+    .copyPrevLesson {
+      float: none;
+      clear: none;
+      margin-bottom: 0;
+      order: 1;
+
+      a {
+        margin-left: 0;
+
+        text-transform: initial;
+        font-size: 1rem;
+        float: none;
+        font-weight: style.$button-weight;
+        border-radius: style.$border-radius;
+        padding: style.$button-padding;
+        height: style.$button-height;
+        box-sizing: border-box;
+        display: inline-flex;
+        text-decoration: none;
+        background-color: #fff !important;
+        border: style.$button-border;
+        color: color.$primary;
+      }
+    }
+  }
+
+  .lesson-theme {
+    font-size: 1rem;
+    line-height: 1.5;
+    font-style: initial;
+    font-weight: 600;
+  }
+
+  .wrapper-students.hide-cells-online {
+    label {
+      @include include.add-text-underline-dotted;
+    }
+
+    thead tr th.online .visit_online {
+      opacity: 0.5;
+    }
+
+    tbody tr td.presents-online {
+      input {
+        // width: 1px;
+        opacity: 0.5;
+      }
+    }
+  }
+
+  .wrapper-students thead {
+    position: sticky;
+    top: 3rem;
+    z-index: 2;
+
+    @include include.thead-after;
+
+    &:hover {
+      th.number,
+      th:nth-child(8) {
+        @include include.add-text-underline-dotted;
+      }
+    }
+
+    // hide th after 9 items (cuz its sometimes buggy)
+    th:nth-of-type(1n + 10) {
+      display: none;
+    }
+
+    .table tr[data-ng-animate] td {
+      display: none;
+    }
+
+    tr {
+      opacity: 0;
+      animation: 0.2s linear 0.2s 1 normal forwards running fadeIn;
+    }
+
+    .visit_online {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    #isAllOnline {
+      accent-color: #d5d5d5;
+    }
+
+    .selector_students .selector_students,
+    .diamonds .diamond {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .diamonds {
+      display: inline-flex;
+    }
+
+    .diamond {
+      font-size: 1rem;
+
+      &:after {
+        width: 1.5rem;
+        height: 1.5rem;
+        top: 0;
+        left: 0;
+        margin-left: 1rem;
+      }
+    }
+  }
+
+  .table {
+    .presents-online input[type="checkbox"] {
+      accent-color: #d5d5d5;
+    }
+
+    .mystat {
+      text-align: left;
+    }
+
+    .comment {
+      min-width: 250px;
+      max-width: 250px;
+
+      div[input-field] {
+        display: flex;
+        gap: 0.5rem;
+        padding-top: 0 !important;
+
+        label {
+          display: none;
+        }
+
+        textarea {
+          box-sizing: border-box;
+        }
+
+        .buttons {
+          display: flex;
+          gap: 0.5rem;
+
+          .btn {
+            margin: 0;
+            line-height: style.$button-lheight !important;
+            height: style.$button-height !important;
+
+            // tlačítko zrušit
+            &[ng-click="obj.edit_c=0;stud.comments = stud.old_comments"] {
+              display: none;
+            }
+
+            // popisek
+            span {
+              text-transform: capitalize;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .table tr {
+    border-bottom: 0;
+  }
+
+  .table tr.ng-animate,
+  .table tr[data-ng-animate] {
+    display: none;
+  }
+
+  .table tbody tr {
+    border-bottom: 0;
+    transition: background-color 0.225s ease;
+
+    // hack height for td that are flexboxes
+    position: relative;
+
+    &:nth-of-type(odd) {
+      background-color: #f8f8f6;
+    }
+
+    // hide parts when not hovering
+    md-select {
+      border-color: transparent;
+      transition: border-color 0.225s ease;
+
+      .md-select-icon {
+        opacity: 0;
+      }
+
+      .md-select-value {
+        user-select: none;
+        pointer-events: none;
+      }
+    }
+
+    .awarded span {
+      opacity: 1;
+      background-image: none;
+    }
+
+    .awarded span:last-child i:first-child {
+      opacity: 0;
+    }
+
+    .comment img[alt="comment"] {
+      opacity: 0;
+    }
+
+    &:hover {
+      background-color: color.$yellow-hover;
+
+      md-select .md-select-icon {
+        opacity: 1;
+      }
+
+      .presentr-controlWork {
+        md-select[data-md-container-class="selectdemoSelectHeader violet"] {
+          border-color: rgba(176, 154, 218, 0.2);
+        }
+
+        &:hover {
+          md-select[data-md-container-class="selectdemoSelectHeader violet"] {
+            border-color: rgba(176, 154, 218, 1);
+          }
+        }
+      }
+
+      .presentr-classWork {
+        md-select[data-md-container-class="selectdemoSelectHeader green"] {
+          border-color: rgba(185, 216, 129, 0.2);
+        }
+
+        &:hover {
+          md-select[data-md-container-class="selectdemoSelectHeader green"] {
+            border-color: rgba(185, 216, 129, 1);
+          }
+        }
+      }
+
+      .awarded span:not(:last-child) {
+        opacity: 1;
+        background-image: url("https://logbook.itstep.org/img/kristall_grey.svg");
+      }
+
+      .awarded:hover span:last-child i:first-child {
+        opacity: 1;
+      }
+
+      .awarded span:last-child i:first-child {
+        opacity: 0.2;
+      }
+
+      .comment img[alt="comment"] {
+        opacity: 1;
+      }
+    }
+  }
+
+  .table td,
+  .table th {
+    min-height: 1rem;
+    padding: 1rem !important;
+    opacity: 0;
+    animation: 0.2s linear 0s 1 normal forwards running fadeIn;
+
+    // vertical-align: baseline
+  }
+
+  .table td.name {
+    font-weight: 700;
+  }
+
+  .table > thead > tr > th {
+    // background: #fff; -> řeší se přes ::after
+    background-color: transparent;
+    color: color.$dark !important;
+
+    // kvůli mystatu - dlouhý název
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+
+    span {
+      text-transform: initial;
+      &::first-letter {
+        text-transform: uppercase;
+      }
+    }
+
+    // druhé - nadpisprofilovky
+    &:nth-child(2) {
+      text-indent: -9999px;
+    }
+
+    // třetí jméno studenta
+    &:nth-child(3) {
+      text-align: left;
+    }
+  }
+
+  .number__presents {
+    width: auto;
+
+    display: flex;
+    align-items: center;
+    align-content: center;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    // justify-content: center;
+    justify-content: space-between;
+    height: 4rem;
+    gap: 1rem;
+    z-index: 1;
+
+    // hack height
+    height: -webkit-fill-available;
+    // position: absolute;
+
+    span {
+      left: 0;
+      font-size: 1rem !important;
+    }
+  }
+
+  .table td.photo {
+    height: 2rem;
+    width: 2rem;
+
+    .user_photo {
+      position: relative;
+    }
+
+    .user_photo-small {
+      width: 2rem;
+      height: 2rem;
+      aspect-ratio: auto 44 / 44;
+      border-radius: 100%;
+    }
+
+    .user_photo-big {
+      display: none;
+
+      position: absolute;
+      width: 10rem;
+      height: auto;
+      right: 50%;
+      bottom: 0;
+      z-index: 3;
+    }
+
+    .user_photo:hover {
+      .user_photo-big {
+        display: inline-block;
+
+        &[src="https://logbook.itstep.org/img/avatarka.svg"]
+        {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .selector_students .ng-binding {
+    display: inline-block;
+  }
+
+  .table td.presents {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: center;
+    height: inherit;
+    grid-gap: 1rem;
+    height: 4rem; // todo: can it be without?
+  }
+
+  // dots
+  .presents span {
+    margin: 0 !important;
+
+    i:before {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
+  .presents span:nth-child(2) i {
+    border-color: #fdd835; // yellow
+  }
+
+  .presents .was-late {
+    border-color: #fdd835;
+    background-color: #fdd835;
+  }
+
+  .button-wrap .buttons .md-button {
+    text-transform: lowercase;
+    font-size: 1rem;
+
+    &::first-letter {
+      text-transform: capitalize;
+    }
+  }
+
+  @media (max-width: 1300px) {
+    // top side
+    .teacherInit {
+      margin-bottom: 1rem;
+    }
+
+    .teacherInit .check-techers-wrap {
+      // margin-bottom: 1rem;
+      margin-bottom: 0;
+    }
+
+    .teacherInit .teacherTextarea {
+      margin-top: 0;
+    }
+
+    .check-techers {
+      margin-top: 0;
+    }
+
+    .lesson-theme {
+      margin-top: 0;
+    }
+
+    .add-materials-btns {
+      height: fit-content;
+    }
+
+    .selector_students,
+    .diamonds,
+    .diamond {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1rem;
+      height: 1.5rem;
+    }
+
+    .diamond {
+      font-size: 1rem;
+
+      &:after {
+        width: 1.4rem;
+        height: 1.4rem;
+        top: 0;
+        left: 0;
+        margin-left: 0.8rem;
+      }
+    }
+
+    .wrapper-students thead {
+      background-color: #fff;
+    }
+
+    // bottom side
+    .wrapper-students table.table thead tr {
+      display: flex;
+    }
+
+    .wrapper-students table.table tbody tr {
+      display: grid;
+      grid-template-columns: 2rem 1fr 1fr 2rem;
+      grid-template-rows: repeat(5, auto);
+      grid-template-areas:
+        "icon name name name"
+        "mystat mystat mystat mystat"
+        "presence presence presence presence"
+        "tests tests tests tests"
+        "score score score score"
+        "diamonds diamonds diamonds diamonds"
+        "comment comment comment comment";
+      padding: 1rem;
+      margin-right: 1rem;
+      margin-bottom: 1rem;
+
+      td {
+        height: auto;
+        min-width: auto;
+        max-width: none;
+
+        min-height: auto;
+        max-height: none;
+
+        float: none;
+        padding: 0 !important;
+        margin: 0;
+      }
+    }
+
+    .wrapper-students table.table tr.presents_stud {
+      border: none;
+
+      &:nth-of-type(2n + 1):not(:hover) {
+        background-color: #fff;
+      }
+
+      .number {
+        grid-area: icon;
+        min-width: auto !important;
+      }
+
+      .number .user-photo span {
+        margin-top: 0;
+      }
+
+      .number .user-photo span img {
+        width: 2rem;
+        height: 2rem;
+      }
+
+      .number .user-photo__presents {
+        margin: 0;
+      }
+
+      .name {
+        grid-area: name;
+        grid-column: 2 / 6;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-left: 1rem !important;
+      }
+
+      .mystat {
+        grid-area: mystat;
+        grid-column: 1 / 6;
+        margin-bottom: 1rem;
+        margin-top: 1rem;
+
+        &.critical_deptor {
+          color: inherit;
+        }
+      }
+
+      .presents {
+        grid-area: presence;
+        grid-column: 1 / 6;
+
+        justify-content: flex-start;
+
+        margin-bottom: 1rem;
+      }
+
+      .presentr-controlWork {
+        grid-area: tests;
+        grid-column: 1 / 6;
+
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 0.5rem;
+
+        div {
+          display: inline;
+        }
+      }
+
+      .presentr-classWork {
+        grid-area: score;
+        grid-column: 1 / 6;
+
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 0.5rem;
+
+        div {
+          display: inline;
+        }
+      }
+
+      .awarded {
+        grid-area: diamonds;
+        grid-column: 1 / 6;
+        width: 100%;
+        margin-bottom: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .comment {
+        grid-area: comment;
+        grid-column: 1 / 6;
+      }
+    }
+  }
+
+  // po přidání materiálu
+  .addMatHomeLab .addHomeWorkpaddingLeft {
+    h4 {
+      // background-color: transparent !important;
+      // font-size: 1rem !important;
+      // color: color.$dark !important;
+      // padding: 0 !important;
+      // margin-top: 1rem;
+      // margin-bottom: 1rem !important;
+      // border: none !important;
+      // opacity: 0.5;
+
+      // &:before {
+      //   content: "Tip: ";
+      // }
+
+      // rework -> simplified
+      display: none;
+    }
+
+    #hw {
+      margin: 0;
+    }
+
+    .calendar_desctop {
+      position: relative;
+      top: unset;
+      left: unset;
+      margin-left: 0;
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+
+      color: transparent; // není nutné
+    }
+
+    .form-field {
+      margin-bottom: 1rem;
+    }
+
+    .form-field.buttons {
+      display: inline-flex;
+      gap: 0.5rem;
+      width: 100%;
+      justify-content: space-between;
+      flex-wrap: wrap;
+
+      button,
+      a.btn {
+        width: auto;
+        text-transform: capitalize;
+        font-size: 1rem;
+      }
+
+      button {
+        order: 2;
+        margin-right: 0;
+      }
+      a.btn {
+        order: 1;
+        background-color: #fff !important;
+        color: color.$primary !important;
+        border: 1px solid color.$primary;
+      }
+
+      .loaded-material {
+        width: 100%;
+        flex-shrink: 0;
+        margin-top: 3rem;
+
+        h3 {
+          display: inline-block;
+          // color: rgb(59, 67, 81);
+          font-size: 1.25rem;
+          line-height: 110%;
+          font-weight: 700;
+          color: color.$dark;
+          margin-bottom: 1rem;
+        }
+
+        .table thead tr > th:nth-child(2) {
+          text-indent: unset;
+        }
+
+        .table thead tr th {
+          text-transform: capitalize;
+          height: auto;
+        }
+
+        .table tbody tr td {
+          width: fit-content;
+          min-width: none;
+          height: auto;
+        }
+
+        .table tbody .long_cell {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          width: 100%;
+        }
+      }
+    }
+
+    .limit_date_info {
+      display: none;
+    }
+
+    md-input-container {
+      label {
+        display: none;
+      }
+    }
+
+    md-calendar > div {
+      margin: 0;
+    }
+
+    .materialize-textarea {
+      white-space: pre-wrap;
+    }
+
+    .form-field.file-field {
+      display: grid;
+      grid-template-columns: auto auto;
+      // grid-template-columns: auto auto;
+      justify-items: end;
+      justify-content: flex-start;
+      grid-template-rows: auto;
+      grid-template-areas: "header header" "input button" "attention attention";
+
+      margin-bottom: 0 !important;
+
+      .attention.ng-binding {
+        grid-area: attention;
+        margin-top: 0.5rem;
+        color: color.$dark;
+        opacity: 0.5;
+        // grid-column: span 2;
+        grid-column: 1 / span 2;
+        justify-self: flex-start;
+
+        display: none;
+      }
+
+      .btn {
+        grid-area: button;
+        width: fit-content;
+        // display: inline-block;
+        float: none;
+        padding: 0 1rem;
+        text-transform: none;
+        // background: color.$primary !important;
+
+        display: inline-flex;
+        place-items: center;
+        height: 2.2rem !important;
+        // height: auto !important;
+
+        span {
+          font-size: 1rem;
+        }
+      }
+
+      .file-path-wrapper {
+        grid-area: input;
+        width: 100%;
+        opacity: 0.5;
+
+        input {
+          border: none;
+          padding-left: 0;
+        }
+      }
+
+      span.margin-bottom {
+        display: none !important;
+      }
+
+      // &::before {
+
+      // }
+    }
+
+    .addHomeWork-inner {
+      display: flex;
+      flex-direction: column;
+      margin-top: 2rem;
+
+      .addHomeWork-inner-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+      }
+
+      .form-field:nth-child(3),
+      .recomend_home_tasks,
+      .col.s12[ng-init="form.descr = ''"],
+      .form-field[ng-init="form.dz_theme = ''"],
+      .calendar_desctop {
+        &:before {
+          display: inline-block;
+          color: color.$dark;
+          font-size: 1.25rem;
+          line-height: 110%;
+          font-weight: 700;
+          margin-bottom: 1rem;
+        }
+      }
+
+      .form-field[ng-init="form.dz_theme = ''"] {
+        order: 1;
+
+        &:before {
+          content: "Nadpis domácího úkolu";
+        }
+      }
+
+      .recomend_home_tasks {
+        order: 2;
+        margin-top: 2rem;
+        &:before {
+          content: "Vyberte z přednastavených úkolů";
+        }
+      }
+
+      .form-field.file-field:nth-child(3) {
+        order: 3;
+        margin-top: 3rem;
+
+        &:before {
+          content: "Nebo nahrejte vlastní úkol";
+          grid-area: header;
+          grid-column: 1 / span 2;
+          justify-self: flex-start;
+          display: block;
+        }
+
+        .btn.btn-hidden {
+          @include include.button-primary;
+          height: auto !important;
+          line-height: normal !important;
+        }
+
+        .btn.btn-hidden:before {
+          font-size: 1rem;
+          content: "Nahrát zadání úkolu";
+        }
+      }
+
+      .form-field.file-field:nth-child(4) {
+        order: 4;
+
+        .btn.btn-hidden {
+          background-color: #fff !important;
+          color: color.$primary !important;
+          border: 1px solid color.$primary;
+
+          &:hover {
+            background-color: color.$primary-hover !important;
+            color: #fff !important;
+          }
+        }
+
+        .btn.btn-hidden:before {
+          font-size: 1rem;
+          content: "Nahrát náhledový obrázek úkolu";
+        }
+      }
+
+      // div "s bez autotestu"
+      div[ng-show="!form.recommended"][aria-hidden="false"]:not(.file-field) {
+        order: 5;
+        margin-bottom: 2rem;
+
+        .margin-bottom.d-flex.flex-between {
+          display: block;
+          margin-bottom: 0.5rem !important;
+        }
+      }
+
+      .calendar_desctop {
+        order: 6;
+        &:before {
+          content: "Datum odevzdání";
+          // margin-right: 1ex;
+        }
+      }
+
+      // div zpráva pro studenty
+      .col.s12[ng-init="form.descr = ''"] {
+        order: 7;
+        margin-bottom: 1rem;
+
+        &:before {
+          content: "Zpráva pro studenty";
+        }
+      }
+
+      .form-field.buttons {
+        order: 8;
+      }
+
+      // uzávěrka domácího úkolu
+      .margin-bottom-20 {
+        order: 9;
+
+        .margin-bottom.d-flex.flex-between {
+          display: block;
+          margin-bottom: 0.5rem !important;
+        }
+      }
+
+      // labels
+      label {
+        display: block;
+      }
+
+      // "fake" labels
+      span.display-inline-block {
+        display: block !important;
+      }
+
+      .md-datepicker-input-container input::placeholder {
+        color: rgb(188, 188, 188);
+        color: #969696;
+      }
+    } // .addHomeWork-inner
+  }
+
+  @media (min-width: 920px) {
+    html md-tooltip .md-content {
+      height: 2rem;
+    }
+  }
+
+  @media (max-width: 880px) {
+    .select_pair .md-ink-ripple {
+      background-color: color.$primary;
+      margin: 0;
+    }
+
+    md-menu {
+      line-height: inherit;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .button-wrap .buttons {
+      margin-top: 0;
+    }
+  }
+
+  @media (max-width: 650px) {
+    .wrapper-students table.table tbody {
+      justify-content: flex-start;
+    }
+  }
+} // end of presents
+
+body .presents #presentsModal {
+  width: 600px;
+
+  h4 {
+    text-align: left;
+    font-size: 1.25rem;
+    color: color.$dark;
+    margin-bottom: 2rem;
+  }
+}
+
+// modal with additional presence request
+#presentsModal {
+  .left-form-side {
+    display: flex;
+    width: 100%;
+    float: none;
+    gap: 1rem;
+
+    md-select {
+      margin-top: 0;
+    }
+  }
+
+  .right-form-side {
+    width: 100%;
+    float: none;
+  }
+
+  .clearfix {
+    display: none;
+  }
+
+  .modal-footer {
+    padding: 0;
+  }
+
+  md-input-container {
+    padding: 0;
+  }
+
+  md-input-container.md-input-focused label,
+  md-input-container.md-input-has-value label {
+    margin-bottom: 0.2rem;
+  }
+
+  md-input-container:not(.md-input-invalid).md-input-focused label,
+  md-input-container:not(.md-input-invalid).md-input-focused md-icon {
+    color: color.$dark !important;
+  }
+
+  .md-errors-spacer:empty {
+    display: none;
+  }
+
+  .modal-footer button.btn.btn-flat {
+    margin-top: 0 !important;
+  }
+
+  .modal-footer.footer-table {
+    margin: 0;
+
+    table {
+      width: auto;
+    }
+  }
+
+  .modal-footer.footer-table thead {
+    background-color: #fff;
+
+    th {
+      color: color.$dark;
+      text-align: left !important;
+      border-bottom: 0.05rem solid #dadee4;
+      border-bottom-width: 0.1rem;
+      padding: 0.6rem 0.4rem;
+      width: auto;
+      height: auto;
+      font-weight: 700;
+
+      i.material-icons {
+        // color: color.$dark;
+        display: none;
+      }
+    }
+  }
+  .modal-footer.footer-table tbody {
+    td {
+      text-align: left !important;
+      border-bottom: 0.05rem solid #dadee4;
+      padding: 0.6rem 0.4rem;
+      height: auto;
+      text-transform: lowercase;
+
+      &:first-child::before {
+        display: none;
+      }
+    }
+  }
+}
+
+// own functionality
+.print-students-button {
+  float: right;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease-in;
+
+  &:hover {
+    opacity: 1;
+  }
+}

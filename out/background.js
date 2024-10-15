@@ -1,0 +1,1 @@
+"use strict";chrome.webNavigation.onCreatedNavigationTarget.addListener((function(e){console.log("New window or tab opened:",e),e.url&&e.url.includes("https://fsx1.itstep.org/api/v1/files")?(chrome.tabs.remove(e.tabId),chrome.tabs.sendMessage(e.sourceTabId,{type:"NEW_WINDOW_OPENED",tabId:e.tabId,url:e.url})):console.log("New tab opened with URL:",e.url)}));

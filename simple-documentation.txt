@@ -1,0 +1,3 @@
+Co bylo třeba udělat + změnit ve zdrojových souborech
+
+Pro preventování otravných ctrl + a u jednotlivých úkolů byl zrušen angular directive mdSelectOnFocus (přejmenován na mdSelectOnFocus2) 

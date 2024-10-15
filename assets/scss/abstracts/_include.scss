@@ -1,0 +1,88 @@
+@use "style" as style;
+@use "color" as color;
+
+@mixin thead-after {
+  &:after {
+    display: block;
+    content: "";
+    width: 100vw;
+    height: 100%;
+    background-color: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+    position: absolute;
+    left: -3rem;
+    bottom: 2px;
+    z-index: -1;
+  }
+}
+
+@mixin button-primary {
+  text-transform: unset;
+  // font-weight: 400;
+  // font-size: 1rem;
+  line-height: normal;
+  // padding: 0.4rem 0.6rem;
+  list-style: none;
+  user-select: none;
+  padding: style.$button-padding;
+  font-weight: style.$button-weight;
+  font-size: style.$button-font-size;
+
+  color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-image: initial;
+  border-radius: style.$border-radius;
+  background-color: color.$primary;
+
+  text-decoration: none;
+  transition: box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s,
+    background-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+
+  &:hover {
+    background-color: color.$primary-hover;
+  }
+}
+
+@mixin button-secondary {
+  text-transform: unset;
+  // font-weight: 400;
+  // font-size: 1rem;
+  line-height: normal;
+  // padding: 0.4rem 0.6rem;
+  list-style: normal;
+  user-select: none;
+  padding: style.$button-padding;
+  font-weight: style.$button-weight;
+  font-size: style.$button-font-size;
+
+  // color: rgb(132, 132, 132);
+  color: color.$dark;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-image: initial;
+  border-radius: style.$border-radius;
+  background-color: #fff;
+
+  text-decoration: none;
+  transition: box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s,
+    background-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+
+  &:hover {
+    background-color: color.$secondary-alt-hover;
+  }
+}
+
+@mixin add-focus {
+  &:focus,
+  &:active {
+    border-color: color.$primary;
+    box-shadow: 0 0 0 0.1rem rgba(color.$primary, 0.2);
+  }
+}
+
+@mixin add-text-underline-dotted {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color.$inputs;
+  text-underline-offset: 4px;
+}

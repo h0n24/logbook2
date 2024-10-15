@@ -1,0 +1,49 @@
+{
+  "name": "__MSG_appName__",
+  "description": "__MSG_appDesc__",
+  "default_locale": "cs",
+  "version": "1.01",
+  "manifest_version": 3,
+  "offline_enabled": true,
+  "author": "Jan Šablatura",
+  "icons": {
+    "128": "icon_128.png"
+  },
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "permissions": [
+    "webNavigation",
+    "tabs",
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
+    "storage"
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ruleset_1",
+        "enabled": true,
+        "path": "rules.json"
+      }
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://lb.itstep.org/*"],
+      "css": ["style.css"],
+      "js": ["injection.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["script-dist.js"],
+      "matches": ["https://lb.itstep.org/*"]
+    }
+  ],
+  "action": {
+    "default_icon": "icon_128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}

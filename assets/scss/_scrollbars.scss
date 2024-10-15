@@ -1,0 +1,58 @@
+@use "abstracts/color";
+
+// restyle scrollbars
+@media (min-width: 768px) {
+  *::-webkit-scrollbar {
+    width: 8px !important;
+    height: 8px !important;
+  }
+
+  *::-webkit-scrollbar-track {
+    // reset
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+
+    // custom style
+    // background-color: #f5f5f5 !important;
+    background-color: darken(color.$toolbars, 0%) !important;
+    border: 3px solid transparent;
+    border-radius: 9px;
+    background-clip: content-box;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    // reset
+    // background-color: #606060 !important;
+    background-color: darken(color.$toolbars, 10%) !important;
+    outline: none !important;
+    // custom style
+    border-radius: 8px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: #909090;
+  }
+
+  // custom style
+  *::-webkit-scrollbar-track-piece:end {
+    background: transparent;
+    margin-bottom: 4px;
+  }
+
+  *::-webkit-scrollbar-track-piece:start {
+    background: transparent;
+    margin-top: 4px;
+  }
+}
+
+// rewrite already used scrollbars
+html body.main main.content md-sidenav.main-sidenav::-webkit-scrollbar {
+  background-color: transparent;
+}
+
+html
+  body.main
+  main.content
+  md-sidenav.main-sidenav.md-closed::-webkit-scrollbar {
+  display: none;
+}

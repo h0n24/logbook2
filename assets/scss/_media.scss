@@ -1,0 +1,24 @@
+@media (max-width: 1300px) {
+  html main.content .presents .dialog-demo-content {
+    margin-top: 0.5rem;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  html #report .table-wrapper.schedule {
+    max-height: fit-content;
+  }
+
+  html .tabs-global ul li a + a img {
+    width: 1.2rem;
+    height: 1.2rem;
+    filter: brightness(0);
+  }
+}
+
+@media (max-width: 767px) {
+  body.main main.content toolbar .pull-right span i.menu_btn {
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+}

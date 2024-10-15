@@ -1,0 +1,34 @@
+#pulse {
+  position: fixed;
+  bottom: 0.6rem;
+  right: 0.2rem;
+
+  margin: 0 0.25rem;
+  margin-top: 0.2rem;
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: hsl(88, 0%, 53%);
+  color: #223110;
+  cursor: help;
+  box-shadow: 0 0 0 hsla(88, 0%, 53%, 0.4);
+  animation: pulse 2s infinite;
+  font-size: 0.6rem;
+  line-height: 1rem;
+
+  &.connected {
+    background: rgb(139, 195, 74);
+    box-shadow: 0 0 0 rgba(139, 195, 74, 0.4);
+  }
+
+  &.disconnected {
+    background: rgb(244, 67, 54);
+    box-shadow: 0 0 0 rgba(244, 67, 54, 0.4);
+  }
+
+  &:hover {
+    -webkit-animation: none;
+    animation: none;
+  }
+}

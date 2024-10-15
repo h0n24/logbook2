@@ -1,0 +1,19 @@
+@use "abstracts/color";
+
+html {
+  md-backdrop.md-opaque.md-default-theme,
+  md-backdrop.md-opaque {
+    // background: rgba(247, 248, 249, 0.75);
+    background: rgba(color.$toolbars, 0.75);
+    opacity: 1;
+  }
+
+  md-backdrop {
+    // transition: opacity 0.125s ease-out;
+    transition: none;
+
+    &.ng-animate {
+      display: none;
+    }
+  }
+}

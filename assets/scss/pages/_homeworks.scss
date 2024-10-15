@@ -1,0 +1,280 @@
+@use "abstracts/color";
+@use "abstracts/style";
+@use "abstracts/include";
+@use "abstracts/animations";
+
+body {
+  .review-hw__stud-answer {
+    white-space: pre-wrap;
+  }
+
+  app-new-homework-list .page-content {
+    max-width: 1000px;
+  }
+}
+
+#zip-entries-table {
+  width: 100%;
+}
+
+#zip-entries-table thead {
+  background-color: #fff;
+
+  th {
+    color: color.$dark;
+    text-align: left !important;
+    border-bottom: 0.05rem solid #dadee4;
+    border-bottom-width: 0.1rem;
+    padding: 0.6rem 0.4rem;
+    width: auto;
+    height: auto;
+    font-weight: 700;
+  }
+}
+#zip-entries-table tbody {
+  td {
+    text-align: left !important;
+    border-bottom: 0.05rem solid #dadee4;
+    padding: 0.6rem 0.4rem;
+    height: auto;
+    // text-transform: lowercase;
+
+    // &:first-child::before {
+    //   display: none;
+    // }
+  }
+  tr:hover {
+    background-color: rgb(255, 249, 196);
+    cursor: pointer;
+  }
+}
+
+#zip-entries-table .zip-entry-filename {
+  font-weight: 400;
+  color: color.$dark;
+  span {
+    margin-left: 0.3rem;
+    margin-right: 0.3rem;
+    // color: #66758c;
+    // color: rgb(182, 182, 182);
+    opacity: 0.4;
+    font-weight: 300;
+  }
+  strong {
+    font-weight: 600;
+    span {
+      margin: 0;
+      font-weight: 500;
+      opacity: 0.7;
+    }
+  }
+}
+
+.btn-modal-zip-back {
+  background-color: #fff;
+  color: color.$dark;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  // padding: 0.5rem;
+  // border-radius: style.$border-radius;
+  border-radius: 1rem;
+  // margin-top: 1rem;
+  text-decoration: none;
+
+  display: flex;
+  margin-top: -0.5rem;
+  margin-left: -0.5rem;
+  user-select: none;
+
+  svg {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+    margin-top: -0.1rem;
+  }
+  svg path {
+    fill: color.$dark;
+  }
+
+  span {
+    margin-left: 0.5rem;
+  }
+
+  &:hover {
+    background-color: color.$secondary-alt-hover;
+  }
+}
+
+.homework-copy-url-to-clipboard {
+  user-select: none;
+  float: none;
+  padding: 0.5rem;
+  margin-right: -0.5rem;
+  margin-top: -0.5rem;
+  cursor: pointer;
+  border-radius: 100%;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background: color.$secondary;
+  }
+  &:active,
+  &:focus {
+    transition: background-color 0.125s;
+    background: color.$primary-hover;
+  }
+}
+
+.added-autocomplete-wrap {
+  display: none;
+  position: absolute;
+  left: 0;
+  bottom: 2px;
+
+  box-sizing: border-box;
+  width: 100%;
+  // background: color.$yellow-hover;
+  // background-color: lighten(color.$yellow-hover, 7%);
+  background: transparent;
+
+  height: 45px;
+  user-select: none;
+  padding: 0 1rem;
+  overflow-x: auto;
+
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  // border: 1px solid rgba(0, 0, 0, 0.15);
+  // border-top-color: color.$yellow-hover;
+  z-index: 2;
+
+  &.added-autocomplete-wrap-active {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 0.25rem;
+  }
+
+  &:before {
+    content: "";
+    z-index: 1;
+    display: block;
+    position: absolute;
+    width: 120px;
+    height: 20px;
+    background-color: #fdfdfd;
+    bottom: 10px;
+    left: 10px;
+  }
+
+  // hide the label below
+  &:after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 120px;
+    height: 20px;
+    background-color: #fdfdfd;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1;
+  }
+}
+
+.added-autocomplete-answer {
+  display: inline-flex;
+  align-items: center;
+  background-color: #eef0f3;
+  // background-color: color.$inputs;
+  color: color.$dark;
+  // background-color: #fff;
+  border-radius: 5rem;
+  font-size: 90%;
+  height: 1.2rem;
+  line-height: 0.8rem;
+  margin: 0.1rem;
+  max-width: 320px;
+  overflow: hidden;
+  padding: 0.2rem 0.4rem;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  z-index: 2;
+
+  &.added-autocomplete-wrap-active {
+    display: inline-flex;
+  }
+
+  &:hover {
+    background: rgba(color.$primary, 10%);
+  }
+  &:focus,
+  &:active,
+  .active {
+    // box-shadow: 0 0 0 0.1rem rgba(87, 85, 217, 0.2);
+    box-shadow: 0 0 0 0.1rem rgba(color.$primary, 0.8);
+  }
+}
+
+.added-autocomplete-close {
+  display: inline-flex;
+  align-items: center;
+  // background-color: #eef0f3;
+  // background-color: color.$inputs;
+  color: color.$dark;
+  // background-color: #fff;
+  border-radius: 5rem;
+  font-size: 90%;
+  height: 1.2rem;
+  width: 1.2rem;
+  line-height: 0.8rem;
+  margin: 0.1rem;
+  max-width: 320px;
+  overflow: hidden;
+  padding: 0.4rem;
+  text-decoration: none;
+  vertical-align: middle;
+  z-index: 2;
+
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  position: relative;
+  justify-self: flex-end;
+  margin-left: auto; // pushes to the end
+
+  &.added-autocomplete-wrap-active {
+    display: inline-flex;
+  }
+
+  &:hover {
+    // background: rgba(color.$primary, 10%);
+    background-color: color.$red-hover;
+    color: #fff;
+  }
+  &:focus,
+  &:active,
+  .active {
+    // box-shadow: 0 0 0 0.1rem rgba(87, 85, 217, 0.2);
+    box-shadow: 0 0 0 0.1rem rgba(color.$primary, 0.8);
+  }
+
+  &:before {
+    content: "✕";
+    display: inline-block;
+    position: absolute;
+    margin-left: 0.25rem;
+  }
+}
+
+.added-autocomplete-info {
+  @include include.add-text-underline-dotted;
+}
+
+// TODO: show after javascript rework?
+.hw-md_single_teacher__file-count {
+  // opacity: 0;
+}

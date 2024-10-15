@@ -1,0 +1,38 @@
+TODO - recreate from the version 1:
+
+- rework background.js and background-auto.ts
+
+
+
+----
+
+TODO next:
+
+ukazovat, jestli jsem zadal dú -> na hlavní stránce
+
+TODO possible:
+
+materials -> rework vyhledávání materiálů (přidat kategorie, přidat poznámky, přidat fuzzy search)
+
+při kliknutí na md-select, autofocus input, pokud existuje (viz v materiálech)
+
+zakomponovat tisk layoutu studentů
+
+zakomponovat responder a zjednodušit práci
+
+předělat stud_profile controller (po kliknutí na studenta v seznamu)
+
+sjednotit barvy u legendy apod
+
+groupsPage když není vybraná skupina -> legenda má opacity
+
+
+rework setTimeout přes https://jsfiddle.net/e7gw3Lm8/
+
+TODO probably impossible yet:
+
+zavírat modals postupně, nejvyšší nejdříve, zatím se zavírají všechny najednou
+(nepodařilo se mi annulovat event listener, který zavírá originální model)
+
+udělat offline verzi, která napíše "jste offline", zkuste restartovat VPN + online checker
+
