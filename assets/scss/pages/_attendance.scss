@@ -7,6 +7,11 @@
 // }
 
 html .mat-body[style] app-attendance {
+  // change width for toggle-group
+  mat-button-toggle-group {
+    width: max-content;
+  }
+
   // different colors for toolbar buttons
   .mat-button-toggle-group .mat-button-toggle {
     background-color: color.$toolbars;
@@ -148,6 +153,29 @@ html .mat-body[style] app-attendance {
           opacity: 1;
         }
       }
+    }
+  }
+
+  // změna textů přes CSS
+
+  // Online přítomnost -> Online
+  th.mat-column-was_type {
+    span {
+      @include include.replace-text("Online", 5ch);
+    }
+  }
+
+  // Označte si další rande -> Změnit datum
+  lib-submenu + div > div.d-flex button:first-child {
+    .mdc-button__label {
+      @include include.replace-text-nowrap("Změnit\0000a0datum", 10ch);
+    }
+  }
+
+  // Přidejte materiály -> přidat DÚ, materiál
+  #set-all-to-12-button + button {
+    .mdc-button__label {
+      @include include.replace-text-nowrap("Přidat DÚ, materiál", 15ch);
     }
   }
 }

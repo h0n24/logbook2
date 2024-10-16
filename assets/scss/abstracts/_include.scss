@@ -1,6 +1,39 @@
 @use "style" as style;
 @use "color" as color;
 
+@mixin replace-text($content, $width) {
+  visibility: hidden;
+  display: inline-block;
+  position: relative;
+  width: $width;
+
+  &:after {
+    content: $content;
+    visibility: visible;
+    position: absolute;
+    left: 0;
+  }
+}
+
+@mixin replace-text-nowrap($content, $width) {
+  text-indent: -9999px;
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+  display: inline-block;
+  width: $width;
+  visibility: hidden;
+
+  &:after {
+    content: $content;
+    position: absolute;
+    left: 0;
+    visibility: visible;
+    width: $width;
+    text-indent: 0;
+  }
+}
+
 @mixin thead-after {
   &:after {
     display: block;
