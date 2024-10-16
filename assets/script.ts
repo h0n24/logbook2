@@ -7,8 +7,7 @@ import { checkForUrlChanges, observeProgressBar } from "./ts/_loading/loading";
 import { autoLogin, onLogout } from "./ts/autoLogin";
 
 import { attendance } from "./ts/attendance/attendance";
-import { homeworkMulti } from "./ts/homework-multi";
-// import { manipulateWithWindowOpen } from "./ts/homework-modal";
+import { homeworkMulti } from "./ts/homework/homework-multi";
 
 // import { homeworkEnhancements } from "./ts/presenceAddHomework";
 // import { scheduleEnhancements } from "./ts/schedule";

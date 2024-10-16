@@ -11,6 +11,11 @@ body {
   app-new-homework-list .page-content {
     max-width: 1000px;
   }
+
+  // styling homework textarea autocomplete
+  .hw-better-buttons mat-form-field {
+    position: relative;
+  }
 }
 
 #zip-entries-table {
@@ -128,13 +133,11 @@ body {
   display: none;
   position: absolute;
   left: 0;
-  bottom: 2px;
+  bottom: -40px;
 
   box-sizing: border-box;
   width: 100%;
-  // background: color.$yellow-hover;
-  // background-color: lighten(color.$yellow-hover, 7%);
-  background: transparent;
+  background-color: color.$toolbars-lighter;
 
   height: 45px;
   user-select: none;
@@ -143,9 +146,14 @@ body {
 
   border-bottom-left-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
-  // border: 1px solid rgba(0, 0, 0, 0.15);
-  // border-top-color: color.$yellow-hover;
+  border: 1px solid #dedede;
+  border-top: 1px solid color.$toolbars;
   z-index: 2;
+
+  .mat-focused & {
+    border: 1px solid color.$primary;
+    border-top: 1px solid color.$toolbars;
+  }
 
   &.added-autocomplete-wrap-active {
     display: flex;
@@ -153,31 +161,6 @@ body {
     justify-content: flex-start;
     flex-wrap: nowrap;
     gap: 0.25rem;
-  }
-
-  &:before {
-    content: "";
-    z-index: 1;
-    display: block;
-    position: absolute;
-    width: 120px;
-    height: 20px;
-    background-color: #fdfdfd;
-    bottom: 10px;
-    left: 10px;
-  }
-
-  // hide the label below
-  &:after {
-    content: "";
-    display: block;
-    position: absolute;
-    width: 120px;
-    height: 20px;
-    background-color: #fdfdfd;
-    bottom: 10px;
-    right: 10px;
-    z-index: 1;
   }
 }
 
@@ -266,7 +249,7 @@ body {
     content: "✕";
     display: inline-block;
     position: absolute;
-    margin-left: 0.25rem;
+    margin-right: 0.25rem;
   }
 }
 

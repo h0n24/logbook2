@@ -2,7 +2,7 @@ import { enhanceHomeworkAssessment } from "./homework-base";
 
 function processHomeworksOnScroll() {
   const homeworks = document.querySelectorAll(
-    "app-new-homework-list .page-content > div"
+    "app-new-homework-list app-homework-review"
   );
 
   const observerOptions = {

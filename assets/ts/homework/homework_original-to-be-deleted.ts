@@ -1,6 +1,6 @@
-import { vocative } from "./vocative";
+import { vocative } from "../vocative";
 import * as zip from "@zip.js/zip.js";
-import { debounce } from "./_incl";
+import { debounce } from "../_incl";
 
 // TODO FUTURE: detect multiple opened modals and close them
 

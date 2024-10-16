@@ -11,6 +11,7 @@ export function vocative(jmeno) {
   // vlastní přepisování -> pro jména kde to moc nefunguje
   if (ljmeno == " čeněk") return "Čeňku";
   if (ljmeno == " daria") return "Dario";
+  if (ljmeno == " isabell") return "Isabello";
 
   // automatické přepisování
   switch (ljmeno.charAt(ljmeno.length - 1)) {
