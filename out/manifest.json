@@ -9,24 +9,8 @@
   "icons": {
     "128": "icon_128.png"
   },
-  "host_permissions": ["http://*/*", "https://*/*"],
-  "permissions": [
-    "webNavigation",
-    "tabs",
-    "declarativeNetRequest",
-    "declarativeNetRequestFeedback",
-    "storage",
-    "downloads"
-  ],
-  "declarative_net_request": {
-    "rule_resources": [
-      {
-        "id": "ruleset_1",
-        "enabled": true,
-        "path": "rules.json"
-      }
-    ]
-  },
+  "host_permissions": ["https://lb.itstep.org/*", "https://lbapi.itstep.org/*"],
+  "permissions": ["webNavigation", "tabs", "storage", "downloads"],
   "content_scripts": [
     {
       "matches": ["https://lb.itstep.org/*"],
