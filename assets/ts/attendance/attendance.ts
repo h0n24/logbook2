@@ -109,7 +109,7 @@ function whenClickedOnPresenceTh() {
 // Aktualizace addContextMenuForEachSelect
 function addContextMenuForEachSelect() {
   try {
-    const selects = document.querySelectorAll(".mat-form-field");
+    const selects = document.querySelectorAll("mat-form-field");
 
     selects.forEach((select) => {
       select.addEventListener("contextmenu", addContextMenu);
