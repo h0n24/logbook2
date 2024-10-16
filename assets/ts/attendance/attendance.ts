@@ -1,3 +1,5 @@
+// file: attendance.ts
+
 import * as incl from "../_incl";
 
 // TODO: refactor this file into separate files
@@ -37,17 +39,21 @@ function set12Mark(event, popup) {
   hideMarkPopup(event, popup);
 }
 
+// Funkce pro kontextové menu
 function addContextMenu(event): void {
   event.preventDefault();
-  incl.clickOnPosition(event.clientX, event.clientY);
 
-  const popupID = event.target.getAttribute("aria-owns");
-  const isEnabled = event.target.getAttribute("aria-disabled") === "false";
-  const popup = document.getElementById(popupID);
+  const matFormField = event.currentTarget;
+  const matSelect = matFormField.querySelector("mat-select");
 
-  if (popup && isEnabled) {
-    set12Mark(event, popup);
+  if (!matSelect) {
+    console.error("Nebylo nalezeno mat-select uvnitř mat-form-field");
+    return;
   }
+
+  selectValueInMatSelect(matSelect, "12").then(() => {
+    console.log('Hodnota "12" byla nastavena pomocí kontextového menu.');
+  });
 }
 
 function whenClickedOnPresenceTh() {
@@ -100,9 +106,10 @@ function whenClickedOnPresenceTh() {
   });
 }
 
+// Aktualizace addContextMenuForEachSelect
 function addContextMenuForEachSelect() {
   try {
-    const selects = document.querySelectorAll("mat-form-field");
+    const selects = document.querySelectorAll(".mat-form-field");
 
     selects.forEach((select) => {
       select.addEventListener("contextmenu", addContextMenu);
@@ -110,7 +117,9 @@ function addContextMenuForEachSelect() {
       (select as HTMLElement).title =
         "Levé tlačítko: Otevřít — Pravé tlačítko: Dát maximální známku";
     });
-  } catch (error) {}
+  } catch (error) {
+    console.error("Chyba při přidávání kontextového menu:", error);
+  }
 }
 
 function countPresentStudents() {
@@ -645,6 +654,7 @@ function presenceEnhancements(state) {
   // needs small timeout because angular firstly
   // adds and after that removes previous rows
   // so it would count previous rows as present
+  // so it would count previous rows as present
   setTimeout(function () {
     try {
       addContextMenuForEachSelect();
@@ -697,8 +707,135 @@ function presenceEnhancements(state) {
   }, 200);
 }
 
-export function presence() {
-  console.log("jsem tu");
+// Pomocné funkce
+function isMatSelectEnabled(matSelect: HTMLElement): boolean {
+  const isDisabled =
+    matSelect.getAttribute("disabled") !== null ||
+    matSelect.classList.contains("mat-select-disabled");
+  return !isDisabled;
+}
+
+function selectValueInMatSelect(
+  matSelect: HTMLElement,
+  value: string
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (!isMatSelectEnabled(matSelect)) {
+      console.warn("mat-select je zakázán.");
+      return resolve();
+    }
+
+    // Otevření mat-select
+    matSelect.click();
+
+    // Čekáme, než se panel otevře
+    const panelClass = ".mat-mdc-select-panel";
+    const timeout = 200; // Může být upraveno dle potřeby
+
+    setTimeout(() => {
+      const panels = document.querySelectorAll(panelClass);
+
+      if (panels.length === 0) {
+        // console.error("Žádný .mat-mdc-select-panel nebyl nalezen");
+        return resolve();
+      }
+
+      // Předpokládáme, že poslední otevřený panel je ten náš
+      const panel = panels[panels.length - 1];
+
+      // Nalezení mat-option s požadovanou hodnotou
+      const matOptions = panel.querySelectorAll("mat-option");
+      let desiredOption: HTMLElement | null = null;
+
+      matOptions.forEach((option) => {
+        if (option.textContent?.trim() === value) {
+          desiredOption = option as HTMLElement;
+        }
+      });
+
+      if (!desiredOption) {
+        console.error(`Nebyla nalezena mat-option s textem "${value}"`);
+        // Zavřeme panel
+        matSelect.click();
+        return resolve();
+      }
+
+      // Kliknutí na požadovanou možnost
+      (desiredOption as HTMLElement).click();
+
+      // mat-select by se měl automaticky zavřít po výběru možnosti
+      resolve();
+    }, timeout);
+  });
+}
+
+// Přidání tlačítka a hromadné nastavení hodnot
+function addGiveAll12ButtonToPage() {
+  // Nejprve zkontrolujeme, zda tlačítko již neexistuje
+  if (document.getElementById("set-all-to-12-button")) {
+    // console.log("Tlačítko pro nastavení známky 12 již existuje.");
+    return;
+  }
+
+  const parentElement = document.querySelector(
+    ".page-content div:nth-child(2):where(.d-flex) > div:nth-child(2):where(.d-flex)"
+  );
+  if (!parentElement) {
+    // console.log("Parent element pro tlačítko nebyl nalezen.");
+    return;
+  }
+
+  const button = document.createElement("button");
+  button.id = "set-all-to-12-button";
+  button.textContent = "Nastavit všem známku 12";
+  button.title =
+    "Kliknutím nastavíte všem studentům známku 12 ve sloupci Třídní práce";
+
+  button.classList.add(
+    "mdc-button",
+    "mat-mdc-button",
+    "mat-mdc-outlined-button"
+  );
+
+  button.addEventListener("click", () => {
+    setAllSelectsTo12();
+  });
+
+  parentElement.prepend(button);
+  // console.log("Tlačítko pro nastavení známky 12 bylo úspěšně přidáno.");
+}
+
+async function setAllSelectsTo12() {
+  const selects = document.querySelectorAll(
+    ".mat-column-mark4 mat-form-field mat-select"
+  );
+
+  if (selects.length === 0) {
+    // console.warn("Žádné mat-select prvky nebyly nalezeny.");
+    return;
+  }
+
+  for (const matSelect of selects) {
+    // Kontrola, zda již má hodnotu '12'
+    const selectedValue = (matSelect as HTMLElement)
+      .querySelector(".mat-select-value-text")
+      ?.textContent?.trim();
+    if (selectedValue === "12") {
+      continue; // Přeskočíme, pokud již má hodnotu '12'
+    }
+
+    await selectValueInMatSelect(matSelect as HTMLElement, "12");
+    // Můžete přidat malé zpoždění mezi nastavením jednotlivých selectů, pokud je to potřeba
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+
+  // console.log('Všem vybraným mat-select prvkům byla nastavena hodnota "12".');
+}
+
+// Aktualizace funkce attendance
+export function attendance() {
+  // console.log("Inicializace attendance funkcí.");
 
   addContextMenuForEachSelect();
+  addGiveAll12ButtonToPage();
 }

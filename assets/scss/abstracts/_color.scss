@@ -4,12 +4,15 @@ $secondary: lighten(desaturate($primary, 100%), 50%);
 $secondary-alt-hover: rgba(0, 0, 0, 0.05);
 
 $dark: #3b4351; // používá se pro text
+$dark-alt: hsl(214, 10%, 52%); // používá se pro text
 
 $toolbars: #f7f8f9;
 $toolbars-active: hsl(220, 6%, 89%);
 $inputs: #bcc3ce;
 
-$yellow-hover: #fff9c4;
+$row-hover: hsl(54, 100%, 50%, 0.09);
+
+$table-border: hsl(210, 14%, 92%);
 
 $orange-500: #ffca28;
 

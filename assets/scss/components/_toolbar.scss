@@ -1,6 +1,6 @@
 @use "abstracts/color";
 
-.mat-body[style] .header {
+html .mat-body[style] .header {
   background-color: color.$toolbars;
   border-bottom: none;
 

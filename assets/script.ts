@@ -9,7 +9,7 @@
 import { homeworkMulti } from "./ts/homework-multi";
 // import { manipulateWithWindowOpen } from "./ts/homework-modal";
 
-import { presence } from "./ts/attendance/attendance";
+import { attendance } from "./ts/attendance/attendance";
 
 // import { autoLogin, onLogout } from "./ts/autoLogin";
 // import { onContextMenu, addInfoForMenu } from "./ts/contextMenu";
@@ -68,6 +68,7 @@ function homeworkPageLoaded() {
 
 function attendancePageLoaded() {
   console.log("Přítomnost, stránka je načtená");
+  attendance();
 }
 
 function observeProgressBar(func, navigationId) {

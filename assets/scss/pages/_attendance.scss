@@ -1,0 +1,165 @@
+@use "abstracts/color";
+@use "abstracts/style";
+@use "abstracts/include";
+
+// :root {
+//   --mat-standard-button-toggle-divider-color: black;
+// }
+
+html .mat-body[style] app-attendance {
+  // different colors for toolbar buttons
+  .mat-button-toggle-group .mat-button-toggle {
+    background-color: color.$toolbars;
+    color: color.$dark !important;
+  }
+
+  .mat-button-toggle-group
+    .mat-button-toggle:has(> button[aria-pressed="true"]) {
+    background-color: rgba(0, 106, 208, 0.1) !important;
+  }
+
+  // 23 Září, Pondělí -> 23. září, pondělí
+  h1 {
+    text-transform: lowercase;
+  }
+
+  // zarovnání informací o specializaci
+  .page-content > div:nth-child(1) {
+    &.mt-3.mb-3.d-flex.align-items-center.justify-content-between {
+      div:nth-child(1) {
+        // make all text same + smaller
+        span {
+          font-size: 13px !important;
+        }
+      }
+    }
+  }
+
+  // zarovnání informací o skupině a tématu lekce
+  .page-content > div:nth-child(2) {
+    &.mt-3.mb-3.d-flex.align-items-center.justify-content-between {
+      div:nth-child(1) {
+        display: inline-flex !important;
+        align-items: center;
+        font-size: 13px;
+
+        // make all text same + smaller
+        span {
+          font-size: 13px !important;
+        }
+
+        // select "Téma lekce"
+        .d-flex.align-items-center {
+          // order: -1;
+          margin-left: 2rem;
+        }
+      }
+    }
+  }
+
+  // sloupec s číslem studenta
+  .mat-column-index {
+    width: 5ch;
+  }
+
+  // sloupec s jménem studenta
+  .mat-column-fio_stud {
+    width: 40ch;
+
+    a {
+      text-decoration: none;
+    }
+  }
+
+  // sloupec s diamanty
+  // [svgicon="diamond"] = nejlepší target na diamant
+  //.prize má barvu = vybraný diamant
+  .mat-column-prize {
+    [svgicon="diamond"] {
+      // nezadaný diamant
+      opacity: 0;
+    }
+    .prize [svgicon="diamond"] {
+      // zadaný diamant
+      opacity: 1;
+    }
+
+    // v hlavičce se zobrazí diamant
+    &:is(th) {
+      [svgicon="diamond"] {
+        opacity: 1;
+      }
+    }
+  }
+
+  .mat-mdc-table.mat-mdc-table .mdc-data-table__cell {
+    border-color: color.$table-border;
+  }
+
+  // změna u "byl v mystatu"
+  .mat-column-last_date_vizit {
+    color: color.$dark-alt;
+  }
+
+  // změna barvy textu selectu
+  .mat-mdc-select-min-line {
+    color: color.$dark;
+  }
+
+  // nezobrazovat select, jen po najetí
+  .mat-mdc-row:not(:hover) {
+    .mat-mdc-form-field .mdc-text-field--outlined.mdc-text-field--outlined {
+      .mdc-notched-outline__leading {
+        border-color: transparent;
+      }
+      .mdc-notched-outline__trailing {
+        border-color: transparent;
+      }
+    }
+
+    .mat-mdc-select-arrow {
+      opacity: 0;
+    }
+
+    .radio-group .mat-mdc-radio-button .mdc-radio__outer-circle {
+      border-color: transparent !important;
+    }
+
+    .mdc-checkbox
+      .mdc-checkbox__native-control:enabled:not(:checked):not(
+        :indeterminate
+      ):not([data-indeterminate="true"])
+      ~ .mdc-checkbox__background {
+      border-color: transparent;
+    }
+  }
+
+  // tabulka přehledu studentů - změna barvy po najetí
+  .mat-mdc-row {
+    transition: background-color 0.225s ease;
+
+    &:hover {
+      background-color: color.$row-hover;
+
+      // změna barvy diamantu po najetí
+      .mat-column-prize {
+        [svgicon="diamond"] {
+          // nezadaný diamant
+          opacity: 1;
+        }
+      }
+    }
+  }
+}
+
+// own functionality
+.print-students-button {
+  float: right;
+  text-decoration: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease-in;
+
+  &:hover {
+    opacity: 1;
+  }
+}
