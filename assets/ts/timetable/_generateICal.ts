@@ -263,114 +263,125 @@ function generateIcalDemo() {
   a.click();
 }
 
-export function generateICalFromSchedule() {
-  // generateIcalDemo();
+function getStoredItems() {
+  const storedItems = localStorage.getItem("logbook-rework-calendar");
+  return storedItems ? JSON.parse(storedItems) : [];
+}
 
-  let storedItems = localStorage.getItem("logbook-rework-calendar");
-  let storedItemsParsed = storedItems ? JSON.parse(storedItems) : [];
+function filterFutureEvents(items) {
+  const todayString = new Date().toISOString();
+  return items.filter((item) => item.dateTo > todayString);
+}
 
-  // remove all events that are older than today
-  let today = new Date();
-  let todayString = today.toISOString();
-  let onlyNewerDates = storedItemsParsed.filter(
-    (item) => item.dateTo > todayString
-  );
-  let itemsCount = onlyNewerDates.length;
-
-  // if #download-ical exists, skip
-  let downloadIcal = document.querySelector("#download-ical");
-  // update count of items
-  let downloadIcalSpan = document.querySelector("#download-ical span");
+function updateDownloadButtonText(itemsCount) {
+  const downloadIcalSpan = document.querySelector("#download-ical span");
   if (downloadIcalSpan) {
     downloadIcalSpan.textContent = `(${itemsCount} událostí)`;
   }
+}
 
-  if (downloadIcal) return;
-
-  // create a href element with download attribute
-  // and text "Stáhnout rozvrh jako iCal (200 událostí)"
-  let a = document.createElement("a");
+function createDownloadLink(itemsCount) {
+  const a = document.createElement("a");
   a.href = "#";
   a.id = "download-ical";
   a.innerHTML = `Stáhnout jako iCal <span>(${itemsCount} událostí)</span>`;
   a.title = `Poznámka: pro načtení více událostí je třeba načíst další (budoucí) týdny. Události se ukládají do lokální paměti prohlížeče. Novější události přepisují starší. Data starší než dnešní datum se automaticky odstraňují.`;
 
-  // add event listener to a
-  a.addEventListener("click", function (e) {
-    e.preventDefault();
+  a.addEventListener("click", handleDownloadClick);
 
-    let storedItems = localStorage.getItem("logbook-rework-calendar");
-    let storedItemsParsed = storedItems ? JSON.parse(storedItems) : [];
+  return a;
+}
 
-    // remove all events that are older than today
-    let today = new Date();
-    let todayString = today.toISOString();
-    let onlyNewerDates = storedItemsParsed.filter(
-      (item) => item.dateTo > todayString
+function handleDownloadClick(event) {
+  event.preventDefault();
+
+  const storedItemsParsed = getStoredItems();
+  const onlyNewerDates = filterFutureEvents(storedItemsParsed);
+  const icalBody = generateICalBody(onlyNewerDates);
+  const ical = icalHeader() + icalBody + icalTimezone() + icalFooter();
+
+  downloadICalFile(ical);
+}
+
+function generateICalBody(events) {
+  let icalBody = "";
+
+  events.forEach((item) => {
+    const newSubject = `${item.isOnline ? "Online " : ""}IT Step — ${
+      item.subject
+    }`;
+    const newGroup = `Skupina: ${item.group}`;
+    const DSToffsetInHours = new Date(item.dateFrom).getTimezoneOffset() / 60;
+
+    const newDateFrom = parseDate(item.dateFrom, DSToffsetInHours);
+    const newDateTo = parseDate(item.dateTo, DSToffsetInHours);
+
+    icalBody += icalEvent(
+      newSubject,
+      newGroup,
+      newDateFrom,
+      newDateTo,
+      !item.isOnline
     );
-
-    let icalBody = "";
-
-    onlyNewerDates.forEach((item) => {
-      let newSubject = "";
-
-      if (item.isOnline) {
-        newSubject += "Online ";
-      }
-      newSubject += "IT Step — " + item.subject;
-
-      let newGroup = "Skupina: " + item.group;
-
-      // is daylight saving time?
-      let DSToffsetInHours = new Date(item.dateFrom).getTimezoneOffset() / 60;
-
-      let oldDateFrom = item.dateFrom.replace("T", " ").replace("Z", "");
-      let newDateFrom = new Date(oldDateFrom + ` GMT-0${DSToffsetInHours}:00`);
-
-      let oldDateTo = item.dateTo.replace("T", " ").replace("Z", "");
-      let newDateTo = new Date(oldDateTo + ` GMT-0${DSToffsetInHours}:00`);
-
-      icalBody += icalEvent(
-        newSubject,
-        newGroup,
-        newDateFrom,
-        newDateTo,
-        !item.isOnline
-      );
-    });
-
-    let ical = icalHeader() + icalBody + icalTimezone() + icalFooter();
-
-    const blob = new Blob([ical], { type: "text/calendar" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-
-    // get date and convert it so we can use it in the file name
-    const date = new Date();
-    const localizedDate = date.toLocaleDateString("cs-CZ", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
-    // get rid of spaces and colons in the date
-    const fileNameTime = localizedDate
-      .replace(/ /g, "-")
-      .replace(/:/g, "-")
-      .replace(/\//g, "-")
-      .replace(/\./g, "")
-      .replace(/,/g, "-");
-
-    a.download = `rozvrh-IT-step-${fileNameTime}.ics`;
-    a.click();
   });
 
-  // preppend to app-timetable-filters
-  let scheduleTop = document.querySelector("app-timetable-filters");
-  if (scheduleTop) {
-    scheduleTop.prepend(a);
+  return icalBody;
+}
+
+function parseDate(dateString, DSToffsetInHours) {
+  const oldDate = dateString.replace("T", " ").replace("Z", "");
+  const offsetSign = DSToffsetInHours >= 0 ? "-" : "+";
+  const offsetHours = Math.abs(DSToffsetInHours).toString().padStart(2, "0");
+  return new Date(`${oldDate} GMT${offsetSign}${offsetHours}:00`);
+}
+
+function downloadICalFile(icalData) {
+  const blob = new Blob([icalData], { type: "text/calendar" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = generateFileName();
+  a.click();
+}
+
+function generateFileName() {
+  const date = new Date();
+  const localizedDate = date.toLocaleDateString("cs-CZ", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const fileNameTime = localizedDate
+    .replace(/ /g, "-")
+    .replace(/:/g, "-")
+    .replace(/\//g, "-")
+    .replace(/\./g, "")
+    .replace(/,/g, "-");
+
+  return `rozvrh-IT-step-${fileNameTime}.ics`;
+}
+
+export function generateICalFromSchedule() {
+  try {
+    const storedItemsParsed = getStoredItems();
+    const onlyNewerDates = filterFutureEvents(storedItemsParsed);
+    const itemsCount = onlyNewerDates.length;
+
+    updateDownloadButtonText(itemsCount);
+
+    const downloadIcal = document.querySelector("#download-ical");
+    if (downloadIcal) return;
+
+    const downloadLink = createDownloadLink(itemsCount);
+
+    const scheduleTop = document.querySelector("app-timetable-filters");
+    if (scheduleTop) {
+      scheduleTop.prepend(downloadLink);
+    }
+  } catch (error) {
+    console.error("Error generating iCal from schedule:", error);
   }
 }
