@@ -647,12 +647,7 @@ function generateICalFromSchedule() {
 }
 
 // add right click to menu
-export function scheduleEnhancements(state) {
-  if (state !== "schedulePage") return;
-
-  const hash = window.location.hash;
-  if (hash !== "#/schedulePage") return;
-
+export function timetableEnhancements() {
   // needs small timeout because angular firstly
   // adds and after that removes previous rows
   // so it would count previous rows as present
@@ -660,7 +655,7 @@ export function scheduleEnhancements(state) {
     try {
       // alert("schedule");
 
-      generateICalFromSchedule();
+      // generateICalFromSchedule(); // TODO
 
       // detect if table changes its data
       const observer = new MutationObserver(function (mutations) {
@@ -668,7 +663,7 @@ export function scheduleEnhancements(state) {
       });
 
       const table = document.querySelector(
-        ".schedule_table tbody"
+        "app-schedule-table tbody"
       ) as HTMLElement;
       observer.observe(table, {
         childList: true,

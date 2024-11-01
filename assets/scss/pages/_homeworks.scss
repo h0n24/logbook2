@@ -256,8 +256,3 @@ body {
 .added-autocomplete-info {
   @include include.add-text-underline-dotted;
 }
-
-// TODO: show after javascript rework?
-.hw-md_single_teacher__file-count {
-  // opacity: 0;
-}
