@@ -64,6 +64,8 @@ html .mat-body[style] {
       // transform: translateX(-50%);
       text-shadow: 1px 1px 2px color.$toolbars, -1px 1px 2px color.$toolbars,
         -1px -1px 0 color.$toolbars, 1px -1px 0 color.$toolbars;
+
+      opacity: 0.7;
     }
   }
 

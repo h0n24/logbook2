@@ -1,78 +1,42 @@
-function hideRowsWithEmptyContent() {
-  const table = document.querySelector(
-    "app-schedule-table table"
-  ) as HTMLTableElement;
-  if (!table) return;
-
-  table.classList.add("hide-empty-rows");
-
-  const rows = table.querySelectorAll("tr");
-  let allRowsEmpty = true; // Initialize the variable
-
-  // Find the index of the first non-empty row
-  let firstContentRowIndex = -1;
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i];
-    const cells = row.querySelectorAll("td");
-    let isEmpty = true;
-
-    cells.forEach((cell) => {
-      if (cell.classList.contains("mat-column-time")) return;
-      if (cell.innerText.trim() !== "") {
-        isEmpty = false;
-      }
-    });
-
-    if (!isEmpty) {
-      firstContentRowIndex = i;
-      allRowsEmpty = false; // Set to false when a non-empty row is found
-      break;
+function isRowEmpty(row: HTMLTableRowElement): boolean {
+  const cells = row.querySelectorAll("td");
+  for (const cell of cells) {
+    if (cell.classList.contains("mat-column-time")) continue;
+    if (cell.innerText.trim() !== "") {
+      return false;
     }
   }
+  return true;
+}
 
-  // Find the index of the last non-empty row
-  let lastContentRowIndex = -1;
-  if (!allRowsEmpty) {
-    for (let i = rows.length - 1; i >= 0; i--) {
-      const row = rows[i];
-      const cells = row.querySelectorAll("td");
-      let isEmpty = true;
-
-      cells.forEach((cell) => {
-        if (cell.classList.contains("mat-column-time")) return;
-        if (cell.innerText.trim() !== "") {
-          isEmpty = false;
-        }
-      });
-
-      if (!isEmpty) {
-        lastContentRowIndex = i;
-        break;
-      }
+function getFirstContentRowIndex(
+  rows: NodeListOf<HTMLTableRowElement>
+): number {
+  for (let i = 0; i < rows.length; i++) {
+    if (!isRowEmpty(rows[i])) {
+      return i;
     }
   }
+  return -1; // All rows are empty
+}
 
-  // If all rows are empty, do not hide any rows
-  if (allRowsEmpty) {
-    rows.forEach((row) => {
-      row.classList.remove("hidden-row", "last-visible-row");
-    });
-    // You can use allRowsEmpty here as needed
-    return;
+function getLastContentRowIndex(rows: NodeListOf<HTMLTableRowElement>): number {
+  for (let i = rows.length - 1; i >= 0; i--) {
+    if (!isRowEmpty(rows[i])) {
+      return i;
+    }
   }
+  return -1; // All rows are empty
+}
 
-  // Process the rows to hide or show
+function processRows(
+  rows: NodeListOf<HTMLTableRowElement>,
+  firstContentRowIndex: number,
+  lastContentRowIndex: number
+): void {
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
-    const cells = row.querySelectorAll("td");
-    let isEmpty = true;
-
-    cells.forEach((cell) => {
-      if (cell.classList.contains("mat-column-time")) return;
-      if (cell.innerText.trim() !== "") {
-        isEmpty = false;
-      }
-    });
+    const isEmpty = isRowEmpty(row);
 
     // Remove any existing .last-visible-row class
     row.classList.remove("last-visible-row");
@@ -104,11 +68,12 @@ function hideRowsWithEmptyContent() {
       row.classList.remove("hidden-row");
     }
   }
+}
 
-  // After processing, find the last visible row and add .last-visible-row class
+function updateLastVisibleRow(rows: NodeListOf<HTMLTableRowElement>): void {
   let lastVisibleRow: HTMLTableRowElement | null = null;
   for (let i = rows.length - 1; i >= 0; i--) {
-    const row = rows[i] as HTMLTableRowElement;
+    const row = rows[i];
     if (!row.classList.contains("hidden-row")) {
       lastVisibleRow = row;
       break;
@@ -122,62 +87,88 @@ function hideRowsWithEmptyContent() {
   if (lastVisibleRow) {
     lastVisibleRow.classList.add("last-visible-row");
   }
+}
 
-  // create row with td with checkbox element
+function createHideEmptyRowsCheckbox(table: HTMLTableElement): void {
+  // Check if the checkbox already exists
+  const existingCheckbox = document.querySelector("#hideEmptyRows");
+  if (existingCheckbox) return;
+
+  // Create container div
   const newDiv = document.createElement("div");
   newDiv.classList.add("hide-empty-rows-wrapper");
 
-  // create checkbox element
+  // Create checkbox element
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
   checkbox.id = "hideEmptyRows";
   checkbox.checked = true;
-  checkbox.addEventListener("change", function () {
-    const isChecked = (this as HTMLInputElement).checked;
-    const rows = table.querySelectorAll("tr");
-    rows.forEach((row) => {
-      if (isChecked) {
-        table.classList.add("hide-empty-rows");
-      } else {
-        table.classList.remove("hide-empty-rows");
-      }
-    });
 
-    // change inner text of label
-    label.innerText = isChecked
-      ? "Zobrazuji pouze řádky s obsahem"
-      : "Skrýt řádky bez obsahu";
-  });
-
-  // create label element
+  // Create label element
   const label = document.createElement("label");
   label.htmlFor = "hideEmptyRows";
   label.innerText = "Zobrazuji pouze řádky s obsahem";
 
-  // check if exists
-  const existingCheckbox = document.querySelector("#hideEmptyRows");
+  // Event listener for checkbox
+  checkbox.addEventListener("change", function () {
+    const isChecked = (this as HTMLInputElement).checked;
+    if (isChecked) {
+      table.classList.add("hide-empty-rows");
+      label.innerText = "Zobrazuji pouze řádky s obsahem";
+    } else {
+      table.classList.remove("hide-empty-rows");
+      label.innerText = "Skrýt řádky bez obsahu";
+    }
+  });
 
-  // do not add if already exists
-  if (existingCheckbox) return;
-
-  // append elements
+  // Append elements
   newDiv.appendChild(checkbox);
   newDiv.appendChild(label);
+
+  // Append to the table wrapper
   const tableWrapper = document.querySelector(".schedule__name") as HTMLElement;
-  // remove contents of tableWrapper
   tableWrapper.innerHTML = "";
   tableWrapper.appendChild(newDiv);
 }
 
-// add right click to menu
+function hideRowsWithEmptyContent() {
+  const table = document.querySelector(
+    "app-schedule-table table"
+  ) as HTMLTableElement;
+  if (!table) return;
+
+  table.classList.add("hide-empty-rows");
+
+  const rows = table.querySelectorAll("tr") as NodeListOf<HTMLTableRowElement>;
+
+  const firstContentRowIndex = getFirstContentRowIndex(rows);
+  const allRowsEmpty = firstContentRowIndex === -1;
+
+  if (allRowsEmpty) {
+    // If all rows are empty, do not hide any rows
+    rows.forEach((row) => {
+      row.classList.remove("hidden-row", "last-visible-row");
+    });
+    return;
+  }
+
+  const lastContentRowIndex = getLastContentRowIndex(rows);
+
+  processRows(rows, firstContentRowIndex, lastContentRowIndex);
+
+  updateLastVisibleRow(rows);
+
+  createHideEmptyRowsCheckbox(table);
+}
+
+// Add right-click to menu
 export function hideEmptyRows() {
-  // needs small timeout because angular firstly
-  // adds and after that removes previous rows
-  // so it would count previous rows as present
+  // Needs a small timeout because Angular first adds and then removes previous rows
+  // So it would count previous rows as present
   setTimeout(function () {
     try {
-      // detect if table changes its data
-      const observer = new MutationObserver(function (mutations) {
+      // Detect if table changes its data
+      const observer = new MutationObserver(function () {
         hideRowsWithEmptyContent();
       });
 
@@ -188,8 +179,10 @@ export function hideEmptyRows() {
         childList: true,
       });
 
-      // hide rows with empty content (default)
+      // Hide rows with empty content (default)
       hideRowsWithEmptyContent();
-    } catch (error) {}
+    } catch (error) {
+      // Handle errors if necessary
+    }
   }, 100);
 }
