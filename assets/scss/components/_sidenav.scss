@@ -42,6 +42,52 @@ html .mat-body[style] {
     .mat-icon {
       color: color.$primary;
     }
+
+    a:has([aria-describedby*="cdk-describedby-message-"]) {
+      &:after {
+        color: color.$primary;
+        text-shadow: 1px 1px 2px #deeaf5, -1px 1px 2px #deeaf5,
+          -1px -1px 0 #deeaf5, 1px -1px 0 #deeaf5;
+      }
+    }
+  }
+
+  // ikona rozvrh hodin
+  a:has([aria-describedby*="cdk-describedby-message-"]) {
+    &:after {
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: color.$dark;
+      position: absolute;
+      bottom: 0.2rem;
+      left: 0.3rem;
+      // transform: translateX(-50%);
+      text-shadow: 1px 1px 2px color.$toolbars, -1px 1px 2px color.$toolbars,
+        -1px -1px 0 color.$toolbars, 1px -1px 0 color.$toolbars;
+    }
+  }
+
+  a:has([aria-describedby="cdk-describedby-message-ng-1-5"]) {
+    &:after {
+      content: "R";
+    }
+  }
+
+  // ikona účast
+  a:has([aria-describedby="cdk-describedby-message-ng-1-6"]) {
+    &:after {
+      content: "Ú";
+    }
+  }
+  a:has([aria-describedby="cdk-describedby-message-ng-1-8"]) {
+    &:after {
+      content: "D";
+    }
+  }
+  a:has([aria-describedby="cdk-describedby-message-ng-1-10"]) {
+    &:after {
+      content: "M";
+    }
   }
 }
 

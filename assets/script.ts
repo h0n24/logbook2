@@ -9,6 +9,7 @@ import { homeworkMulti } from "./ts/homework/homework-multi";
 
 // import { homeworkEnhancements } from "./ts/presenceAddHomework"; //TODO + incorporate into attendance
 import { timetableEnhancements } from "./ts/timetable/schedule"; //TODO
+import { hideEmptyRows } from "./ts/timetable/hideEmpty"; //TODO
 // import { reportsEnhacements } from "./ts/reports"; //TODO
 
 // init ------------------------------------------------------------------------
@@ -35,6 +36,7 @@ function homeworkPageLoaded() {
 
 function timetablePageLoaded() {
   console.log("Rozvrh, stránka je načtená");
+  hideEmptyRows();
   timetableEnhancements();
 }
 
