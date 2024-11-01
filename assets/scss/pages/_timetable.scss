@@ -49,6 +49,42 @@ html {
         background-color: color.$toolbars-lighter !important;
       }
     }
+
+    // rework visibility of lesson item
+    .schedule__lesson {
+      & > div {
+        padding: 1rem 1rem 0 1rem !important;
+      }
+
+      & > div:nth-child(1) {
+        div:first-child {
+          color: hsla(0, 0%, 100%, 0.85);
+        }
+      }
+
+      & > div:nth-child(2) {
+        border-top: none !important;
+
+        div:nth-child(2) {
+          display: block !important;
+
+          &:after {
+            content: " studentů";
+          }
+        }
+      }
+    }
+
+    .schedule__lesson mat-icon {
+      display: none !important;
+    }
+  }
+
+  app-timetable-filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 }
 

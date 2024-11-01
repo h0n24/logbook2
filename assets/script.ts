@@ -8,8 +8,7 @@ import { attendance } from "./ts/attendance/attendance"; // TODO: incorporate re
 import { homeworkMulti } from "./ts/homework/homework-multi";
 
 // import { homeworkEnhancements } from "./ts/presenceAddHomework"; //TODO + incorporate into attendance
-import { getTableData } from "./ts/timetable/getTableData"; //TODO
-import { hideEmptyRows } from "./ts/timetable/hideEmpty"; //TODO
+import { timetable } from "./ts/timetable/timetable"; //TODO
 // import { reportsEnhacements } from "./ts/reports"; //TODO
 
 // init ------------------------------------------------------------------------
@@ -36,8 +35,7 @@ function homeworkPageLoaded() {
 
 function timetablePageLoaded() {
   console.log("Rozvrh, stránka je načtená");
-  hideEmptyRows();
-  getTableData();
+  timetable();
 }
 
 const urlHandlers = {

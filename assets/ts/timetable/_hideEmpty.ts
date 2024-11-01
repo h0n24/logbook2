@@ -163,26 +163,22 @@ function hideRowsWithEmptyContent() {
 
 // Add right-click to menu
 export function hideEmptyRows() {
-  // Needs a small timeout because Angular first adds and then removes previous rows
-  // So it would count previous rows as present
-  setTimeout(function () {
-    try {
-      // Detect if table changes its data
-      const observer = new MutationObserver(function () {
-        hideRowsWithEmptyContent();
-      });
-
-      const table = document.querySelector(
-        "app-schedule-table tbody"
-      ) as HTMLElement;
-      observer.observe(table, {
-        childList: true,
-      });
-
-      // Hide rows with empty content (default)
+  try {
+    // Detect if table changes its data
+    const observer = new MutationObserver(function () {
       hideRowsWithEmptyContent();
-    } catch (error) {
-      // Handle errors if necessary
-    }
-  }, 100);
+    });
+
+    const table = document.querySelector(
+      "app-schedule-table tbody"
+    ) as HTMLElement;
+    observer.observe(table, {
+      childList: true,
+    });
+
+    // Hide rows with empty content (default)
+    hideRowsWithEmptyContent();
+  } catch (error) {
+    // Handle errors if necessary
+  }
 }

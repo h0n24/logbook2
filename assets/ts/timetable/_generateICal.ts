@@ -1,6 +1,3 @@
-// TODO: needs major refactor
-// schedulePage
-
 function icalHeader() {
   let header = "";
 
@@ -266,197 +263,19 @@ function generateIcalDemo() {
   a.click();
 }
 
-function getDateFromPagePicker() {
-  // get date from .page_picker .beetwen_nav
-  // example format: "15. 4. 2024- 21. 4. 2024"
-  let dateRange = document.querySelector(".page_picker .beetwen_nav");
-  if (!dateRange) return;
+export function generateICalFromSchedule() {
+  // generateIcalDemo();
 
-  // get first date
-  let dateRangeText = dateRange.textContent || "";
-  let dateRangeSplit = dateRangeText.split("-");
-  let dateFrom = dateRangeSplit[0].trim();
-
-  // remodel date to be in format: "2024-04-15"
-  // currently in format: "15. 4. 2024"
-
-  dateFrom = dateFrom.replace(/\s/g, ""); // remove spaces
-  let dateSplitted = dateFrom.split("."); // split by dots
-
-  let day = dateSplitted[0];
-  let month = dateSplitted[1];
-  let year = dateSplitted[2];
-
-  // add leading zeros
-  day = day.padStart(2, "0");
-  month = month.padStart(2, "0");
-
-  let newDateFrom = `${year}-${month}-${day}`;
-
-  return newDateFrom;
-}
-
-function generateDataFromCell(
-  lessonItem: HTMLElement,
-  mondayDate: string,
-  dayIndex: number,
-  lessonItems: any[]
-) {
-  let subjectEl = lessonItem.querySelector(".subject") as HTMLElement;
-  let subject = subjectEl.textContent || "Neznámá událost";
-  subject = subject.trim();
-
-  let groupEl = lessonItem.querySelector(".group") as HTMLElement;
-  let group = groupEl.textContent || "Neznámá skupina";
-  group = group.trim();
-
-  let auditoryElement = lessonItem.querySelector(".auditory") as HTMLElement;
-  let auditoryText = auditoryElement.textContent || "";
-  auditoryText = auditoryText.trim();
-  // remove every character that is not a letter
-  auditoryText = auditoryText.replace(/[^a-zA-Z]/g, "");
-  // convert to lowercase
-  auditoryText = auditoryText.toLowerCase();
-  let isOnline = auditoryText.includes("online");
-
-  let timeEl = lessonItem.querySelector(".lesson-time") as HTMLElement;
-  let time = timeEl.textContent || "00:00-00:00";
-  // remove everything that is not number or - or :
-  time = time.replace(/[^0-9:-]/g, "");
-
-  let timeSplit = time.split("-");
-  let timeFrom = timeSplit[0];
-  let timeTo = timeSplit[1];
-
-  // remodel so it will be in format: "2024-04-15T08:00:00"
-  let dateFrom = new Date(`${mondayDate}T${timeFrom}:00`);
-  let dateTo = new Date(`${mondayDate}T${timeTo}:00`);
-
-  // add day based on dayNumber
-  dateFrom.setDate(dateFrom.getDate() + dayIndex);
-  dateTo.setDate(dateTo.getDate() + dayIndex);
-
-  // add to array
-  lessonItems.push({
-    dateFrom,
-    dateTo,
-    dateCreated: new Date(),
-    subject,
-    group,
-    isOnline,
-  });
-}
-
-function sortAndSaveToLocalStorage(lessonItems: any[]) {
-  let lessonItemsBase = lessonItems;
-  let lessonItemsSorted = lessonItemsBase.sort(
-    (a, b) => a.dateFrom - b.dateFrom
-  );
-
-  // stringify lessonItemsSorted
-  let lessonItemsSortedStringified = JSON.stringify(lessonItemsSorted);
-  // parse lessonItemsSorted
-  let lessonItemsSortedParsed = JSON.parse(lessonItemsSortedStringified);
-
-  // load data from localstorage
-  let storedItems = localStorage.getItem("logbook-rework-ical");
+  let storedItems = localStorage.getItem("logbook-rework-calendar");
   let storedItemsParsed = storedItems ? JSON.parse(storedItems) : [];
-
-  // merge arrays
-  let mergedItems = [...storedItemsParsed, ...lessonItemsSortedParsed];
-
-  // sort by "dateFrom" key that is a string in format "2024-04-13T01:41:55.706Z"
-  mergedItems = sortArrayByDateFrom(mergedItems);
-
-  // find if it has two items with the same "dateFrom", if yes, console.log it
-  // create mergedItemsFiltered array
-  let mergedItemsFiltered = mergedItems.filter((item, index, array) => {
-    let sameItems = array.filter((x) => x.dateFrom === item.dateFrom);
-    if (sameItems.length > 1) {
-      // console.log("sameItems", { dateFrom: item.dateFrom, sameItems });
-
-      // find the one that has newer dateCreated
-      let newestItem = sameItems.reduce((prev, current) =>
-        prev.dateCreated > current.dateCreated ? prev : current
-      );
-
-      return item === newestItem;
-    } else {
-      return true;
-    }
-  });
-
-  let mergedItemsFilteredSorted = sortArrayByDateFrom(mergedItemsFiltered);
 
   // remove all events that are older than today
   let today = new Date();
   let todayString = today.toISOString();
-  let onlyNewerDates = mergedItemsFilteredSorted.filter(
+  let onlyNewerDates = storedItemsParsed.filter(
     (item) => item.dateTo > todayString
   );
-
-  // save to localstorage
-  localStorage.setItem("logbook-rework-ical", JSON.stringify(onlyNewerDates));
-}
-
-function sortArrayByDateFrom(mergedItems: any[]) {
-  mergedItems.sort((a, b) => {
-    let dateA = new Date(a.dateFrom) as any;
-    let dateB = new Date(b.dateFrom) as any;
-    return dateA - dateB;
-  });
-
-  return mergedItems;
-}
-
-function findAllTdThatHaveLessonItem() {
-  // from .schedule_table tbody get all td
-  // skip td with .para
-  // get .lesson-item
-
-  let tableTbody = document.querySelector(".schedule_table tbody");
-  if (!tableTbody) return;
-
-  // get all rows
-  let rows = tableTbody.querySelectorAll("tr");
-  if (!rows) return;
-
-  let lessonItems = [] as any[];
-  let mondayDate = getDateFromPagePicker() as string;
-
-  // detect if dateFrom is valid date, if not, return
-  if (mondayDate === undefined) return;
-  let testDate = new Date(mondayDate);
-  if (isNaN(testDate.getTime())) return;
-
-  // iterate over rows
-  rows.forEach((row) => {
-    let cells = row.querySelectorAll("td");
-    if (!cells) return;
-
-    cells.forEach((cell) => {
-      if (cell.classList.contains("para")) return;
-
-      let dayIndex = cell.cellIndex - 1;
-
-      let lessonItem = cell.querySelector(".lesson-item") as HTMLElement;
-      if (lessonItem) {
-        generateDataFromCell(lessonItem, mondayDate, dayIndex, lessonItems);
-      }
-    });
-  });
-
-  // sort by dateFrom
-  sortAndSaveToLocalStorage(lessonItems);
-}
-
-function generateICalFromSchedule() {
-  // generateIcalDemo();
-  findAllTdThatHaveLessonItem();
-
-  let storedItems = localStorage.getItem("logbook-rework-ical");
-  let storedItemsParsed = storedItems ? JSON.parse(storedItems) : [];
-  let itemsCount = storedItemsParsed.length;
+  let itemsCount = onlyNewerDates.length;
 
   // if #download-ical exists, skip
   let downloadIcal = document.querySelector("#download-ical");
@@ -480,12 +299,19 @@ function generateICalFromSchedule() {
   a.addEventListener("click", function (e) {
     e.preventDefault();
 
-    let storedItems = localStorage.getItem("logbook-rework-ical");
+    let storedItems = localStorage.getItem("logbook-rework-calendar");
     let storedItemsParsed = storedItems ? JSON.parse(storedItems) : [];
+
+    // remove all events that are older than today
+    let today = new Date();
+    let todayString = today.toISOString();
+    let onlyNewerDates = storedItemsParsed.filter(
+      (item) => item.dateTo > todayString
+    );
 
     let icalBody = "";
 
-    storedItemsParsed.forEach((item) => {
+    onlyNewerDates.forEach((item) => {
       let newSubject = "";
 
       if (item.isOnline) {
@@ -542,21 +368,9 @@ function generateICalFromSchedule() {
     a.click();
   });
 
-  // preppend to .schedule .schedule_top
-  let scheduleTop = document.querySelector(".schedule .schedule_top");
+  // preppend to app-timetable-filters
+  let scheduleTop = document.querySelector("app-timetable-filters");
   if (scheduleTop) {
     scheduleTop.prepend(a);
   }
-}
-
-// add right click to menu
-export function getTableData() {
-  // needs small timeout because angular firstly
-  // adds and after that removes previous rows
-  // so it would count previous rows as present
-  setTimeout(function () {
-    try {
-      generateICalFromSchedule();
-    } catch (error) {}
-  }, 100);
 }
