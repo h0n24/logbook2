@@ -8,12 +8,12 @@ import { attendance } from "./ts/attendance/attendance"; // TODO: incorporate re
 import { homeworkMulti } from "./ts/homework/homework-multi";
 
 // import { homeworkEnhancements } from "./ts/presenceAddHomework"; //TODO + incorporate into attendance
-import { timetable } from "./ts/timetable/timetable"; //TODO
+import { timetable } from "./ts/timetable/timetable";
 
 // init ------------------------------------------------------------------------
 
 function anyPageLoaded(url) {
-  console.log("Stránka je načtená: ", url);
+  // console.log("Stránka je načtená: ", url);
   onLogout(); // needs to be added to all pages to prevent silent access
 }
 
