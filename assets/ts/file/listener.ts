@@ -10,11 +10,11 @@ window.addEventListener("message", function (event) {
     return; // Only accept messages from the same window
   }
   if (event.data && event.data.type === "BY_PASS_MODAL") {
-    console.log("Received message to bypass modal");
+    // console.log("Received message to bypass modal");
 
     // Send a message to the background script
     chrome.runtime.sendMessage({ type: "BY_PASS_MODAL" }, function (response) {
-      console.log("Background script acknowledged BY_PASS_MODAL");
+      // console.log("Background script acknowledged BY_PASS_MODAL");
     });
   }
 });
@@ -28,16 +28,14 @@ export function fileListener() {
   ) {
     if (request.type === "NEW_WINDOW_OPENED" && request.url) {
       const urlText = request.url;
-      console.log("New window or tab was opened:", urlText);
+      // console.log("New window or tab was opened:", urlText);
 
       // Check if the URL includes the specified text
       if (urlText.includes("https://fsx1.itstep.org/api/v1/files")) {
         if (shouldBypassModal) {
           // Bypass the modal and proceed to download directly
-          console.log("Bypassing modal due to right-click");
           setTimeout(() => {
             shouldBypassModal = false; // Reset the flag
-            console.log("Resetting the flag");
           }, 100);
 
           // Allow the download to proceed by not calling the custom handler
@@ -55,7 +53,7 @@ export function fileListener() {
           }
         }
       } else {
-        console.log("URL does not match the specified pattern.");
+        // console.log("URL does not match the specified pattern.");
       }
     }
   });

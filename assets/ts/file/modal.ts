@@ -598,12 +598,8 @@ function whenOpeningLinkWithFile({
   windowName: string | undefined;
   windowFeatures: string | undefined;
 }) {
-  console.log("whenOpeningLinkWithFile", urlText);
-
   // Use the last clicked filename
   let filename = lastClickedFilename || "file";
-
-  console.log("filename", filename);
 
   // Fetch the file
   fetch(urlText, {
@@ -661,21 +657,17 @@ document.addEventListener("click", function (event) {
     const filename = button.getAttribute("data-filename") || "file";
     // Update the last clicked filename
     lastClickedFilename = filename;
-    console.log("Clicked button with filename:", filename);
   }
 });
 
 export function fileModal() {
-  // console.log("fileModal");
-
   // @ts-ignore
   window.customData = {
     zipBypassModal: false,
     whenOpeningLinkWithFile: function (params) {
       const { urlText, original, url, windowName, windowFeatures } = params;
-      // Display a modal or custom UI
-      console.log("Handling file link: " + urlText, params);
 
+      // Display a modal or custom UI
       whenOpeningLinkWithFile({
         urlText,
         original,

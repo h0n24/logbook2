@@ -458,12 +458,8 @@ function createAnswersAutocomplete(target, skipFocus = false) {
     "app-homework-review.hw-better-buttons"
   ) as HTMLElement;
 
-  console.log("targetDialog", targetDialog);
-
   // add element to the textarea
   let teacherWrap = targetDialog.querySelector("mat-form-field");
-
-  console.log("teacherWrap", teacherWrap);
 
   if (teacherWrap) {
     // detect if element already exists
@@ -481,8 +477,6 @@ function createAnswersAutocomplete(target, skipFocus = false) {
 
       return;
     }
-
-    console.log("addedWrapElement - not found");
 
     // create wrap element
     addedWrapElement = document.createElement("div");
@@ -586,8 +580,6 @@ export function enhanceHomeworkAssessment(homework: Element, single?: boolean) {
     // when textarea is focused, show autocomplete
     textarea.addEventListener("focus", function () {
       createAnswersAutocomplete(textarea, true);
-
-      console.log("textarea - focus");
     });
 
     homework.setAttribute("alreadyEnhancedHomework", "true");
