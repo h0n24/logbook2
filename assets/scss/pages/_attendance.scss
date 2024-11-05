@@ -157,25 +157,10 @@ html .mat-body[style] app-attendance {
   }
 
   // změna textů přes CSS
-
   // Online přítomnost -> Online
   th.mat-column-was_type {
     span {
       @include include.replace-text("Online", 5ch);
-    }
-  }
-
-  // Označte si další rande -> Změnit datum
-  lib-submenu + div > div.d-flex button:first-child {
-    .mdc-button__label {
-      @include include.replace-text-nowrap("Změnit\0000a0datum", 10ch);
-    }
-  }
-
-  // Přidejte materiály -> přidat DÚ, materiál
-  #set-all-to-12-button + button {
-    .mdc-button__label {
-      @include include.replace-text-nowrap("Přidat DÚ, materiál", 15ch);
     }
   }
 }
@@ -184,6 +169,9 @@ html .mat-body[style] app-attendance {
 .print-students-button {
   float: right;
   text-decoration: none;
+
+  border: none;
+  background-color: transparent;
   opacity: 0.5;
   transition: opacity 0.3s ease-in;
 

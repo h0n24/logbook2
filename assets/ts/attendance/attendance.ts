@@ -424,6 +424,16 @@ function detectIfNotRatedOrDiamonds() {
   detectIfNotRated(); // needs to be after detectIfNotDiamonds, so title is set properly
 }
 
+function getTextWithoutHTML(element: Element): string {
+  let text = "";
+  element.childNodes.forEach((node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      text += node.textContent?.trim() || "";
+    }
+  });
+  return text;
+}
+
 function copyTableForPrinting() {
   // if exists, remove
   const tableCopyExists = document.querySelector("#print-table") as HTMLElement;
@@ -432,19 +442,20 @@ function copyTableForPrinting() {
   }
 
   const table = document.querySelector(
-    ".wrapper-students table"
+    "app-attendance .students-table tbody"
   ) as HTMLElement;
   const tableCopy = table.cloneNode(true) as HTMLElement;
   tableCopy.id = "print-table";
   tableCopy.classList.add("print-table");
 
+  // TODO:
   // remove hidden + uncheck
-  const presentsOnline = tableCopy.querySelectorAll(".presents-online input");
-  presentsOnline.forEach((input) => {
-    let inputElement = input as HTMLInputElement;
-    inputElement.classList.remove("ng-hide");
-    inputElement.checked = false;
-  });
+  // const presentsOnline = tableCopy.querySelectorAll(".presents-online input");
+  // presentsOnline.forEach((input) => {
+  //   let inputElement = input as HTMLInputElement;
+  //   inputElement.classList.remove("ng-hide");
+  //   inputElement.checked = false;
+  // });
 
   // append new body to html with table
   const newBody = document.createElement("body");
@@ -453,17 +464,19 @@ function copyTableForPrinting() {
   // create new h1 with content of .groupName
   const h1 = document.createElement("h1");
   h1.classList.add("print-table-title");
-  const groupName = document.querySelector(".groupName") as HTMLElement;
-  h1.innerHTML = "Skupina: " + groupName.textContent;
+  const groupName = document.querySelector(
+    '[data-rework-id="attandance-submenu-second"] > div:nth-child(1)'
+  ) as HTMLElement;
+  h1.innerHTML = "Skupina: " + getTextWithoutHTML(groupName);
   newBody.appendChild(h1);
 
   // create new h2 with content of .specName
   const h2 = document.createElement("h2");
   h2.classList.add("print-table-subtitle");
-  const specName = document.querySelector(".specName") as HTMLElement;
+  const specName = document.querySelector(
+    '[data-rework-id="attandance-submenu-first"] > div:nth-child(1) span:nth-child(2)'
+  ) as HTMLElement;
   let specNameText = specName.textContent as string;
-  specNameText = specNameText.replace("(", "");
-  specNameText = specNameText.replace(")", "");
   h2.innerHTML = "Téma: " + specNameText;
   newBody.appendChild(h2);
 
@@ -483,24 +496,21 @@ function copyTableForPrinting() {
   let secondTimeText = "";
   try {
     const firstTimeElement = document.querySelector(
-      ".pars .tab.active a"
+      "mat-button-toggle.mat-button-toggle-checked"
     ) as HTMLElement;
     firstTimeText = firstTimeElement.textContent as string;
-    // text looks like this: '\n                        15:30 - 16:30\n                    '
     firstTimeText = firstTimeText.replace(/\s/g, "");
     firstTimeText = firstTimeText.replace("\n", "");
     firstTimeText = firstTimeText.split("-")[0];
 
-    // get next element after ".pars .tab.active" that has class .tab
-    const firstTimeElementParent =
-      firstTimeElement.parentElement as HTMLElement;
-    const nextElement =
-      firstTimeElementParent.nextElementSibling as HTMLElement;
-    let secondTimeElement = nextElement.querySelector("a") as HTMLElement;
-    secondTimeText = secondTimeElement.textContent as string;
-    secondTimeText = secondTimeText.replace(/\s/g, "");
-    secondTimeText = secondTimeText.replace("\n", "");
-    secondTimeText = secondTimeText.split("-")[1];
+    // Najít následující mat-button-toggle
+    const nextElement = firstTimeElement.nextElementSibling as HTMLElement;
+    if (nextElement) {
+      secondTimeText = nextElement.textContent as string;
+      secondTimeText = secondTimeText.replace(/\s/g, "");
+      secondTimeText = secondTimeText.replace("\n", "");
+      secondTimeText = secondTimeText.split("-")[1];
+    }
   } catch (error) {}
 
   if (firstTimeText == "" || secondTimeText == "") {
@@ -516,7 +526,7 @@ function copyTableForPrinting() {
   document.documentElement.appendChild(newBody);
 
   // original body with class .main hide via hidden attribute
-  const main = document.querySelector("body.main") as HTMLElement;
+  const main = document.querySelector("body.mat-body") as HTMLElement;
   main.hidden = true;
 
   // create temporary style for printing
@@ -542,35 +552,24 @@ function copyTableForPrinting() {
     .open-menu-block, md-sidenav, toolbar, .topPanel {
       display: none;
     }
-    .table-wrapper .table {
-      display: none;
-    }
-
+    
     #print-table {
       margin-top: 1rem;
       display: table !important;
-    }
-
-    #print-table .presents_stud td:not(.name) {
-        display: none;
-    }
-
-    #print-table .presents_stud .number {
-      display: table-cell !important;
-      color: #000;
-      font-weight: 300;
-    }
-
-    #print-table .presents_stud .presents-online {
-      display: table-cell !important;
-    }
-
-    #print-table .presents_stud [ng-model="stud.was"] {
-        display: none;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     }
     
     #print-table thead {
         display: none;
+    }
+
+    #print-table img {
+        display: none;
+    }
+
+    #print-table a {
+      text-decoration: none;
+      color: #000;
     }
 
     .print-table-title {
@@ -584,7 +583,51 @@ function copyTableForPrinting() {
       font-size: 16px;
       margin-bottom: 0.5rem;
     }
-    
+
+    #print-table .cdk-column-last_date_vizit {
+      display: none;
+    }
+
+    #print-table .cdk-column-was {
+      display: none;
+    }
+
+    #print-table .cdk-column-mark2 {
+      display: none;
+    }
+
+    #print-table .cdk-column-mark4 {
+      display: none;
+    }
+
+    #print-table .cdk-column-prize {
+      display: none;
+    }
+
+    #print-table .cdk-column-comments {
+      display: none;
+    }
+
+    #print-table .cdk-column-actions {
+      display: none;
+    }
+
+    #print-table mat-checkbox.d-none {
+      display: block !important;
+    }
+
+    #print-table .mdc-data-table__cell {
+      border-bottom-color: #f7f8f9;
+    }
+
+    #print-table td {
+      padding: 0.5rem;
+    }
+
+    #print-table .mdc-data-table__row {
+      height: auto !important;
+    }
+
   `;
   document.head.appendChild(style);
 
@@ -613,7 +656,9 @@ function copyTableForPrinting() {
 
 function printTable() {
   // if table doesnt have any content, return
-  const testTable = document.querySelector(".wrapper-students table tbody");
+  const testTable = document.querySelector(
+    "app-attendance .students-table tbody"
+  );
   let testTableContent = testTable?.textContent || "";
   testTableContent = testTableContent?.replace(/\s/g, "");
   if (!testTableContent) return;
@@ -628,12 +673,14 @@ function printTable() {
 
   // prepend button to .topPanel .dialog-demo-content
   const topPanel = document.querySelector(
-    ".topPanel .dialog-demo-content"
+    '[data-rework-id="attendance-table-wrapper-right"]'
   ) as HTMLElement;
-  const printButton = document.createElement("a");
-  printButton.href = "#";
+
+  if (!topPanel) return;
+  const printButton = document.createElement("button");
   printButton.id = "print-students-button";
-  printButton.title = "Tisk studentů";
+  printButton.title =
+    "Vytisknout seznam studentů, hodí se při suplování či nové skupině";
   printButton.innerHTML = "🖨️";
   printButton.classList.add("print-students-button");
 
@@ -641,7 +688,7 @@ function printTable() {
     copyTableForPrinting();
   });
 
-  topPanel.appendChild(printButton);
+  topPanel.prepend(printButton);
 }
 
 // TODO: rework this whole function
@@ -657,45 +704,12 @@ function presenceEnhancements(state) {
   // so it would count previous rows as present
   setTimeout(function () {
     try {
-      addContextMenuForEachSelect();
-      countPresentStudents();
-      whenPresenceChanged();
-      whenTeacherRoleChanged();
-      whenClickedOnPresenceTh();
+      countPresentStudents(); // TODO: implement
+      whenPresenceChanged(); // TODO: implement with previous
 
-      printTable();
+      whenTeacherRoleChanged(); // TODO: implement ???
 
-      // @ts-ignore
-      window.getPresenceAsText = function () {
-        console.log("test");
-      };
-
-      automaticallySelectOnlineForOnlineGroups();
-      detectIfNotRatedOrDiamonds();
-
-      // when clicked on .presents .pars li
-      const tabs = document.querySelectorAll(".presents .pars li");
-      tabs.forEach((tab) => {
-        tab.addEventListener("click", detectIfNotRatedOrDiamonds);
-      });
-
-      // observe .table-wrapper for changes
-      const tableWrapper = document.querySelector(
-        ".table-wrapper"
-      ) as HTMLElement;
-      const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          if (mutation.addedNodes.length) {
-            automaticallySelectOnlineForOnlineGroups();
-            detectIfNotRatedOrDiamonds();
-          }
-        });
-      });
-
-      observer.observe(tableWrapper, {
-        childList: true,
-        subtree: true,
-      });
+      detectIfNotRatedOrDiamonds(); // TODO: implement
     } catch (error) {}
   }, 100);
 
@@ -832,10 +846,81 @@ async function setAllSelectsTo12() {
   // console.log('Všem vybraným mat-select prvkům byla nastavena hodnota "12".');
 }
 
+function preparePageWithCustomSelectors() {
+  // top wrapper
+  const attendanceTitleWrapper = document.querySelector(
+    "app-attendance lib-submenu + div"
+  ) as HTMLElement;
+  if (!attendanceTitleWrapper) return;
+  attendanceTitleWrapper.dataset.reworkId = "attendance-title-wrapper";
+
+  // top wrapper right
+  const attendanceTitleWrapperRight = attendanceTitleWrapper.querySelector(
+    ".d-flex.align-items-center"
+  ) as HTMLElement;
+  if (!attendanceTitleWrapperRight) return;
+  attendanceTitleWrapperRight.dataset.reworkId =
+    "attendance-table-wrapper-right";
+
+  // page content first div
+  const pageContentFirstDiv = document.querySelector(
+    "app-attendance .page-content > div:nth-child(1)"
+  ) as HTMLElement;
+  if (!pageContentFirstDiv) return;
+  pageContentFirstDiv.dataset.reworkId = "attandance-submenu-first";
+
+  // page content second div
+  const pageContentSecondDiv = document.querySelector(
+    "app-attendance .page-content > div:nth-child(2)"
+  ) as HTMLElement;
+  if (!pageContentSecondDiv) return;
+  pageContentSecondDiv.dataset.reworkId = "attandance-submenu-second";
+
+  // špatně přeložené tlačítko - datum
+  preparePageWrongTranslations(
+    attendanceTitleWrapperRight,
+    pageContentSecondDiv
+  );
+}
+
+function preparePageWrongTranslations(
+  attendanceTitleWrapperRight: HTMLElement,
+  pageContentSecondDiv: HTMLElement
+) {
+  try {
+    const titleButtons = attendanceTitleWrapperRight.querySelectorAll("button");
+    const translatedDate = Array.from(titleButtons).find((button) =>
+      button.textContent?.includes("Označte si další rande")
+    );
+
+    if (translatedDate) {
+      translatedDate.querySelector(".mdc-button__label")!.textContent =
+        "Změnit datum";
+    }
+  } catch (error) {}
+
+  try {
+    // špatně přeložené tlačítko - materiály
+    const secondDivButtons = pageContentSecondDiv.querySelectorAll("button");
+    const translatedMaterials = Array.from(secondDivButtons).find((button) =>
+      button.textContent?.includes("Přidejte materiály")
+    );
+    if (translatedMaterials) {
+      translatedMaterials.querySelector(".mdc-button__label")!.textContent =
+        "Přidat DÚ, materiál";
+    }
+  } catch (error) {}
+}
+
 // Aktualizace funkce attendance
 export function attendance() {
   // console.log("Inicializace attendance funkcí.");
+  // TODO: incorporate all from original function
+
+  preparePageWithCustomSelectors();
 
   addContextMenuForEachSelect();
   addGiveAll12ButtonToPage();
+
+  printTable();
 }

@@ -69,24 +69,27 @@ html .mat-body[style] {
     }
   }
 
-  a:has([aria-describedby="cdk-describedby-message-ng-1-5"]) {
+  #mat-expansion-panel-header-1 a:has(mat-icon) {
     &:after {
       content: "R";
     }
   }
 
   // ikona účast
-  a:has([aria-describedby="cdk-describedby-message-ng-1-6"]) {
+  #mat-expansion-panel-header-2 a:has(mat-icon) {
     &:after {
       content: "Ú";
     }
   }
-  a:has([aria-describedby="cdk-describedby-message-ng-1-8"]) {
+
+  // ikona DÚ
+  #mat-expansion-panel-header-4 a:has(mat-icon) {
     &:after {
       content: "D";
     }
   }
-  a:has([aria-describedby="cdk-describedby-message-ng-1-10"]) {
+
+  #mat-expansion-panel-header-6 a:has(mat-icon) {
     &:after {
       content: "M";
     }
