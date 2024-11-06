@@ -313,9 +313,6 @@ function makeURLinTextClickable(homework) {
 }
 
 function findStudentsFirstName(homework: Element, single?: boolean) {
-  // const singleSel = single ? ".hw-md_single_stud__info" : ".hw-md_stud__info";
-  //   const fullNameEl = homework.querySelector(`${singleSel} .bold`) as HTMLSpanElement;
-
   const singleSel = "app-homework-review h2";
   const fullNameEl = homework.querySelector(singleSel) as HTMLSpanElement;
 
@@ -335,7 +332,7 @@ function findStudentsFirstName(homework: Element, single?: boolean) {
 function getSelectedMark(homework: Element) {
   let selectedMark = 0;
 
-  // preselect maximmum mark only if it's not already selected
+  // preselect maximum mark only if it's not already selected
   const radioButtons = homework.querySelectorAll(
     "mat-button-toggle-group .mat-button-toggle-button"
   ) as NodeListOf<HTMLInputElement>;
@@ -371,13 +368,8 @@ function automateMessagesForStudents(
 
   if (!textarea) return;
 
-  // if textarea already has a some text value, don't overwrite it
+  // if textarea already has some text value, don't overwrite it
   if (textarea.value) return;
-
-  // remove focus functionality
-  // if (textarea.getAttribute("md-select-on-focus")) {
-  //   textarea.removeAttribute("md-select-on-focus");
-  // }
 
   let partialInteresting = selectRandomFromArray([
     "Moc pěkná práce!",
@@ -394,13 +386,6 @@ function automateMessagesForStudents(
     "Je to parádní.",
     "Hodně dobře zpracované.",
   ]);
-  // let partialGetting = selectRandomFromArray([
-  //   "Dostáváš",
-  //   "Dávám Ti",
-  //   "Zasloužíš si",
-  //   "Dostáváš ode mě",
-  // ]);
-  //  const message = `Zdravím ${firstName},\n\r${partialInteresting} ${partialEnjoying} ${partialGetting} ${selectedMark} bodů.\n\rS pozdravem`;
   const message = `Zdravím ${firstName},\n\r${partialInteresting} ${partialEnjoying}\n\rS pozdravem`;
   textarea.value = message;
 
@@ -452,6 +437,44 @@ function addTextAnswerToTextarea(target: HTMLElement, addedText: string) {
   textarea.focus();
 }
 
+function addRandomMessageToTextarea(textarea: HTMLTextAreaElement) {
+  let homework = textarea.closest("app-homework-review") as HTMLElement;
+  let firstName = findStudentsFirstName(homework);
+  let partialInteresting = selectRandomFromArray([
+    "Moc pěkná práce!",
+    "Luxusní práce!",
+    "Perfektní práce!",
+    "Super práce!",
+    "Super!",
+    "Parádní práce!",
+  ]);
+  let partialEnjoying = selectRandomFromArray([
+    "Líbí se mi to.",
+    "Je to moc zajímavé.",
+    "Je to super.",
+    "Je to parádní.",
+    "Hodně dobře zpracované.",
+  ]);
+  const message = `Zdravím ${firstName},\n\r${partialInteresting} ${partialEnjoying}\n\rS pozdravem`;
+  textarea.value = message;
+  textarea.dispatchEvent(new Event("input"));
+  textarea.dispatchEvent(new Event("change"));
+}
+
+function focusNextAutocompleteAnswer(currentElement: HTMLElement) {
+  let parent = currentElement.parentElement;
+  if (!parent) return;
+  let autocompleteAnswers = parent.querySelectorAll(
+    ".added-autocomplete-answer"
+  ) as NodeListOf<HTMLElement>;
+  let currentIndex = Array.prototype.indexOf.call(
+    autocompleteAnswers,
+    currentElement
+  );
+  let nextIndex = (currentIndex + 1) % autocompleteAnswers.length;
+  autocompleteAnswers[nextIndex].focus();
+}
+
 function createAnswersAutocomplete(target, skipFocus = false) {
   // find parent .hw-better-buttons
   let targetDialog = target.closest(
@@ -459,7 +482,7 @@ function createAnswersAutocomplete(target, skipFocus = false) {
   ) as HTMLElement;
 
   // add element to the textarea
-  let teacherWrap = targetDialog.querySelector("mat-form-field");
+  let teacherWrap = targetDialog.querySelector("mat-form-field") as HTMLElement;
 
   if (teacherWrap) {
     // detect if element already exists
@@ -488,7 +511,7 @@ function createAnswersAutocomplete(target, skipFocus = false) {
       let answer = hwAutocompleteAnswers[i];
       let answerText = answer.title;
 
-      // crate new a href element
+      // create new a href element
       let addedAnswerElement = document.createElement("a") as HTMLAnchorElement;
       addedAnswerElement.href = "#";
       addedAnswerElement.classList.add("added-autocomplete-answer");
@@ -506,8 +529,32 @@ function createAnswersAutocomplete(target, skipFocus = false) {
       // when clicked
       addedAnswerElement.addEventListener("click", addClickForAnswerElement);
 
+      // when keydown
+      addedAnswerElement.addEventListener("keydown", function (event) {
+        if (event.key === " " || event.key === "Spacebar") {
+          // Prevent default scrolling behavior
+          event.preventDefault();
+          // Simulate click
+          this.click();
+        } else if (event.ctrlKey && event.key === " ") {
+          // Handle Ctrl + Space to focus next autocomplete answer
+          event.preventDefault();
+          focusNextAutocompleteAnswer(this);
+        }
+      });
+
       addedWrapElement.appendChild(addedAnswerElement);
     }
+
+    // Add info about keyboard shortcuts
+    // Create the info element
+    let infoElement = document.createElement("span");
+    infoElement.classList.add("added-autocomplete-info");
+    infoElement.innerHTML = "?";
+    infoElement.title =
+      "Klávesové zkratky:\nCtrl + mezerník pro rychlé odpovědi. Tab / Shift + Tab pro přechod mezi odpověďmi. Mezerník pro vybrání odpovědi.\nCtrl + Shift + mezerník pro náhodnou zprávu.\nCtrl + Enter pro odeslání.";
+
+    addedWrapElement.appendChild(infoElement);
 
     // add close element
     let addedCloseElement = document.createElement("a");
@@ -519,27 +566,11 @@ function createAnswersAutocomplete(target, skipFocus = false) {
     addedCloseElement.addEventListener("click", function (event) {
       event.preventDefault();
       addedWrapElement.remove();
+      target.focus();
     });
 
     addedWrapElement.appendChild(addedCloseElement);
     teacherWrap.appendChild(addedWrapElement);
-
-    // TODO: add back ability to refresh quick answers
-    // add info about keyboard shortcuts
-    // to the closest .hw-md_single__add-comment element
-    // const addCommentElements = targetDialog.querySelectorAll(
-    //   ".hw-md_single__add-comment"
-    // ) as NodeListOf<HTMLElement>;
-    // for (let i = 0; i < addCommentElements.length; i++) {
-    //   const addCommentElement = addCommentElements[i] as HTMLElement;
-    //   const textContent = addCommentElement.textContent ?? "";
-
-    //   if (textContent.includes("Přidat komentář")) {
-    //     addCommentElement.classList.add("added-autocomplete-info");
-    //     addCommentElement.title =
-    //       "Klávesové zkratky: Ctrl + mezerník pro rychlé odpovědi. Ctrl + Shift + mezerník pro náhodnou zprávu (je nutné předem vše smazat).";
-    //   }
-    // }
 
     if (!skipFocus) {
       // set first element as active
@@ -570,16 +601,43 @@ export function enhanceHomeworkAssessment(homework: Element, single?: boolean) {
     // add autocomplete
     const textarea = homework.querySelector("textarea") as HTMLTextAreaElement;
 
-    // TODO: check if necessary
-    // select parent
-    // const parent = textarea.parentElement as HTMLElement;
-    // parent.addEventListener("onchange", function () {
-    //   createAnswersAutocomplete(textarea, true);
-    // });
-
     // when textarea is focused, show autocomplete
     textarea.addEventListener("focus", function () {
       createAnswersAutocomplete(textarea, true);
+    });
+
+    // Add keydown event listener to handle Ctrl shortcuts
+    textarea.addEventListener("keydown", function (event) {
+      if (event.ctrlKey && event.shiftKey && event.key === " ") {
+        event.preventDefault();
+        // Remove all text and add a random message
+        textarea.value = "";
+        addRandomMessageToTextarea(textarea);
+      } else if (event.ctrlKey && event.key === " ") {
+        event.preventDefault();
+        createAnswersAutocomplete(textarea, false);
+        // Focus the first autocomplete answer
+        let firstAnswer = homework.querySelector(
+          ".added-autocomplete-answer"
+        ) as HTMLElement;
+        if (firstAnswer) {
+          firstAnswer.focus();
+        }
+      }
+
+      if (event.ctrlKey && event.key === "Enter") {
+        event.preventDefault();
+        // Trigger button.mat-primary inside that particular app-homework-review element
+        let appHomeworkReview = textarea.closest("app-homework-review");
+        if (appHomeworkReview) {
+          let matPrimaryButton = appHomeworkReview.querySelector(
+            "button.mat-primary.mat-mdc-unelevated-button"
+          ) as HTMLButtonElement;
+          if (matPrimaryButton) {
+            matPrimaryButton.click();
+          }
+        }
+      }
     });
 
     homework.setAttribute("alreadyEnhancedHomework", "true");

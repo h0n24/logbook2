@@ -16,6 +16,11 @@ body {
   .hw-better-buttons mat-form-field {
     position: relative;
   }
+
+  // styling autocomplete textarea - caret color
+  .mdc-text-field .mdc-text-field__input {
+    caret-color: #000;
+  }
 }
 
 #zip-entries-table {
@@ -194,11 +199,15 @@ body {
   &:hover {
     background: rgba(color.$primary, 10%);
   }
+
   &:focus,
+  &:focus-visible,
+  &:focus-within,
   &:active,
   .active {
     // box-shadow: 0 0 0 0.1rem rgba(87, 85, 217, 0.2);
     box-shadow: 0 0 0 0.1rem rgba(color.$primary, 0.8);
+    outline: none;
   }
 }
 
@@ -217,7 +226,8 @@ body {
   margin: 0.1rem;
   max-width: 320px;
   overflow: hidden;
-  padding: 0.4rem;
+  // padding: 0.4rem;
+  padding: 0.2rem;
   text-decoration: none;
   vertical-align: middle;
   z-index: 2;
@@ -240,19 +250,25 @@ body {
   }
   &:focus,
   &:active,
+  &:focus-visible,
+  &:focus-within,
   .active {
     // box-shadow: 0 0 0 0.1rem rgba(87, 85, 217, 0.2);
-    box-shadow: 0 0 0 0.1rem rgba(color.$primary, 0.8);
+    box-shadow: 0 0 0 0.1rem rgba(color.$red-500, 0.8);
+    outline: none;
   }
 
   &:before {
     content: "✕";
     display: inline-block;
     position: absolute;
-    margin-right: 0.25rem;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 
 .added-autocomplete-info {
-  @include include.add-text-underline-dotted;
+  // @include include.add-text-underline-dotted;
+  color: color.$dark-alt;
+  cursor: help;
 }
