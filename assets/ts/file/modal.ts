@@ -19,16 +19,25 @@ let zipBypassModalFirstRun = true; // allow at the beginning to open the file TO
 
 let focusedElement = document.activeElement as HTMLElement;
 let keyboardShortcutsForNewModals = null as any; // TODO ADD: !!!
+let backspaceEventListener = null as any;
 
 function eventListenerForNewModal(event) {
   if (event.key === "Escape") {
     const dialogElement = document.querySelector("#modal-file") as Element;
     dialogElement.classList.remove("active");
+    removeBackspaceEventListener();
   }
 }
 
 function createEventListenerForFileModal() {
   document.addEventListener("keyup", eventListenerForNewModal);
+}
+
+function removeBackspaceEventListener() {
+  if (backspaceEventListener) {
+    document.removeEventListener("keydown", backspaceEventListener);
+    backspaceEventListener = null;
+  }
 }
 
 function createUrlfromText(originalText: any) {
@@ -134,6 +143,7 @@ function createModalLayout(data: any, url: any, type: any, filename: any = "") {
   function eventCloseNewModal(event) {
     event.preventDefault();
     dialog.classList.remove("active");
+    removeBackspaceEventListener();
   }
 
   const dialog = document.createElement("div");
@@ -158,6 +168,7 @@ function createModalLayout(data: any, url: any, type: any, filename: any = "") {
   const close = document.createElement("a");
   close.href = "#close";
   close.classList.add("btn-modal-close");
+  close.title = "Klávesová zkratka: Escape";
   close.setAttribute("aria-label", "Close");
 
   // Create modal title
@@ -254,6 +265,16 @@ function createModalTitle(
       event.preventDefault();
       createZipFileTable();
     });
+
+    // Add event listener for backspace key
+    backspaceEventListener = function (event) {
+      if (event.key === "Backspace") {
+        event.preventDefault();
+        createZipFileTable();
+      }
+    };
+
+    document.addEventListener("keydown", backspaceEventListener);
 
     title.innerHTML = "";
     title.appendChild(backButton);
@@ -380,6 +401,8 @@ async function readZipFile(
 }
 
 function createZipFileTable() {
+  removeBackspaceEventListener();
+
   // @ts-ignore
   const zipReader2 = window.zipReaderData;
   // @ts-ignore
@@ -563,6 +586,9 @@ function getExtensionFromEntryFilename(entry: zip.Entry) {
 
   // split by . and get last element
   extension = extension.split(".").pop() ?? "";
+
+  // convert to lowercase
+  extension = extension.toLowerCase();
   return extension;
 }
 
