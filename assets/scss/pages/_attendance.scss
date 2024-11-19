@@ -153,7 +153,27 @@ html .mat-body[style] app-attendance {
           opacity: 1;
         }
       }
+
+      .mat-column-prize {
+        color: color.$dark-alt;
+        --mdc-icon-button-icon-color: color.$dark-alt;
+      }
+
+      .prize {
+        color: color.$primary-alt;
+      }
+
+      .hover-prize,
+      .hover-prize .prize {
+        color: color.$orange-500 !important;
+        --mdc-icon-button-icon-color: color.$orange-500 !important;
+      }
     }
+  }
+
+  // has to be here cuz the page has just idiotic specifity
+  .mat-mdc-table.mat-mdc-table .mdc-data-table__cell .mdc-icon-button:hover {
+    color: color.$orange-500;
   }
 
   // změna textů přes CSS
