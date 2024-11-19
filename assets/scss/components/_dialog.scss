@@ -74,6 +74,22 @@
   max-width: 640px;
   padding: 0 0.8rem;
   width: 100%;
+
+  // animation that looks like its rubberbanding when change of height happens
+  height: auto;
+  height: calc-size(auto);
+}
+
+@keyframes rubberband {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .modal-container.modal-fullheight {

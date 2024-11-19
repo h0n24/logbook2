@@ -13,7 +13,14 @@ const filesAllowedToShowAsText = [
   ".json",
   ".md",
 ];
-const filesAllowedToShowAsImage = [".png", ".jpg", ".jpeg", ".gif", ".svg"];
+const filesAllowedToShowAsImage = [
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".gif",
+  ".svg",
+  ".jfif",
+];
 let zipBypassModal = false; // allow at the beginning to open the file TODO: remove
 let zipBypassModalFirstRun = true; // allow at the beginning to open the file TODO: remove
 

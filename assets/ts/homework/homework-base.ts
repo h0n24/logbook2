@@ -1,19 +1,7 @@
 // file name: homework-base.ts
 
 import { vocative } from "../vocative";
-import * as zip from "@zip.js/zip.js";
 
-const filesAllowedToShowAsText = [
-  ".txt",
-  ".js",
-  ".css",
-  ".html",
-  ".json",
-  ".md",
-];
-const filesAllowedToShowAsImage = [".png", ".jpg", ".jpeg", ".gif", ".svg"];
-let zipBypassModal = false; // allow at the beginning to open the file
-let zipBypassModalFirstRun = true; // allow at the beginning to open the file
 const hwAutocompleteAnswers = [
   {
     title: "Super",
@@ -95,15 +83,27 @@ function shouldAddSpace(character, isStart) {
   }
 }
 
-function betterButtonsRework(homework: Element) {
+function betterButtonsRework(homework: Element, single?: boolean) {
   // Add new class .hw-better-buttons
   homework.classList.add("hw-better-buttons");
+
+  if (single) {
+    homework.classList.add("hw-better-buttons_single");
+  }
 
   try {
     // Find the lector button
     let lectorWrap = homework.querySelector(
       ".mdc-icon-button-xs"
     ) as HTMLDivElement;
+
+    if (!lectorWrap) {
+      lectorWrap = homework.querySelector(
+        "h2 + div a[download]"
+      ) as HTMLDivElement;
+
+      if (!lectorWrap) return;
+    }
 
     // Set the button text
     lectorWrap.innerHTML = "Zadání od lektora";
@@ -138,7 +138,19 @@ function betterButtonsRework(homework: Element) {
       ".mat-mdc-icon-button"
     ) as HTMLDivElement;
 
-    if (!studentWrap) return;
+    // class="mdc-button mdc-button--unelevated mat-mdc-unelevated-button mat-primary mat-mdc-button-base"
+
+    if (!studentWrap) {
+      console.log("No studentWrap found, probably single homework");
+
+      studentWrap = homework.querySelector(
+        ".mb-2.ng-star-inserted a[download]"
+      ) as HTMLDivElement;
+
+      console.log("studentWrap", studentWrap);
+
+      if (!studentWrap) return;
+    }
 
     // Set the button text
     studentWrap.innerHTML = "Stáhnout práci studenta";
@@ -190,14 +202,9 @@ function extractFilenameFromLector(homework: Element): string {
 
 // Helper function to extract filename for student button
 function extractFilenameFromStudent(homework: Element): string {
-  const appHomeworkReview = homework.querySelector("app-homework-review");
-
-  if (appHomeworkReview) {
-    const div = appHomeworkReview.querySelector(
-      "div.mb-1.ng-star-inserted .text-dark"
-    );
-
-    const h2 = appHomeworkReview.querySelector("h2");
+  if (homework) {
+    const div = homework.querySelector("div.mb-1.ng-star-inserted .text-dark");
+    const h2 = homework.querySelector("h2");
 
     if (div && h2) {
       let studentInfo = h2.textContent?.trim() || "Student";
@@ -265,8 +272,19 @@ function createUrlfromText(originalText: any) {
 
 function makeURLinTextClickable(homework) {
   try {
-    const studentsComments = homework.querySelector(".review-hw__stud-answer");
-    if (studentsComments === null) return;
+    let studentsComments = homework.querySelector(".review-hw__stud-answer");
+
+    if (!studentsComments) {
+      console.warn("No studentsComments found");
+
+      studentsComments = homework.querySelector(
+        ".d-flex.mb-2.ng-star-inserted p.m-0"
+      );
+
+      console.log("studentsComments", studentsComments);
+
+      if (!studentsComments) return;
+    }
 
     let originalText = studentsComments.innerText;
     if (!originalText) return;
@@ -565,6 +583,9 @@ function createAnswersAutocomplete(target, skipFocus = false) {
 
     addedCloseElement.addEventListener("click", function (event) {
       event.preventDefault();
+      console.log("addedCloseElement clicked");
+      console.log("addedWrapElement", addedWrapElement);
+
       addedWrapElement.remove();
       target.focus();
     });
@@ -590,7 +611,7 @@ export function enhanceHomeworkAssessment(homework: Element, single?: boolean) {
   if (homework.getAttribute("alreadyEnhancedHomework") === "true") {
     return;
   } else {
-    betterButtonsRework(homework);
+    betterButtonsRework(homework, single);
 
     makeURLinTextClickable(homework);
 

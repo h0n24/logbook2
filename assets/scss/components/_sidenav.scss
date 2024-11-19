@@ -69,27 +69,31 @@ html .mat-body[style] {
     }
   }
 
-  #mat-expansion-panel-header-1 a:has(mat-icon) {
+  #mat-expansion-panel-header-1 a:has(mat-icon),
+  #mat-expansion-panel-header-31 a:has(mat-icon) {
     &:after {
       content: "R";
     }
   }
 
   // ikona účast
-  #mat-expansion-panel-header-2 a:has(mat-icon) {
+  #mat-expansion-panel-header-2 a:has(mat-icon),
+  #mat-expansion-panel-header-32 a:has(mat-icon) {
     &:after {
       content: "Ú";
     }
   }
 
   // ikona DÚ
-  #mat-expansion-panel-header-4 a:has(mat-icon) {
+  #mat-expansion-panel-header-4 a:has(mat-icon),
+  #mat-expansion-panel-header-34 a:has(mat-icon) {
     &:after {
       content: "D";
     }
   }
 
-  #mat-expansion-panel-header-6 a:has(mat-icon) {
+  #mat-expansion-panel-header-6 a:has(mat-icon),
+  #mat-expansion-panel-header-36 a:has(mat-icon) {
     &:after {
       content: "M";
     }
@@ -106,14 +110,21 @@ mat-expansion-panel:has(#mat-expansion-panel-header-3),
 mat-expansion-panel:has(#mat-expansion-panel-header-5),
 mat-expansion-panel:has(#mat-expansion-panel-header-7),
 mat-expansion-panel:has(#mat-expansion-panel-header-8),
-mat-expansion-panel:has(#mat-expansion-panel-header-9) {
+mat-expansion-panel:has(#mat-expansion-panel-header-9),
+mat-expansion-panel:has(#mat-expansion-panel-header-30),
+mat-expansion-panel:has(#mat-expansion-panel-header-33),
+mat-expansion-panel:has(#mat-expansion-panel-header-35),
+mat-expansion-panel:has(#mat-expansion-panel-header-37),
+mat-expansion-panel:has(#mat-expansion-panel-header-38),
+mat-expansion-panel:has(#mat-expansion-panel-header-39) {
   order: 1;
   .mat-icon {
     color: rgb(24, 24, 27, 0.3);
   }
 }
 
-mat-expansion-panel:has(#mat-expansion-panel-header-0):before {
+mat-expansion-panel:has(#mat-expansion-panel-header-0):before,
+mat-expansion-panel:has(#mat-expansion-panel-header-30):before {
   content: " ";
   display: block;
   position: relative;

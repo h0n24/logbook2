@@ -21,6 +21,70 @@ body {
   .mdc-text-field .mdc-text-field__input {
     caret-color: #000;
   }
+
+  .hw-better-buttons .hw-better-buttons__lector {
+    &:hover {
+      color: color.$primary;
+    }
+  }
+
+  .hw-better-buttons .hw-better-buttons__student {
+    &:hover {
+      color: color.$primary;
+    }
+  }
+
+  .hw-better-buttons.hw-better-buttons_single {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .mb-1,
+    .mb-2 {
+      margin-bottom: 0 !important;
+    }
+  }
+
+  .hw-better-buttons_single .hw-better-buttons__lector {
+    color: #397dfb !important;
+
+    &:hover {
+      color: color.$primary !important;
+    }
+  }
+
+  .hw-better-buttons_single .hw-better-buttons__student {
+    border: 1px solid;
+  }
+
+  .hw-better-buttons_single .d-flex.mb-2:not(.ng-star-inserted) {
+    display: none !important;
+  }
+
+  .hw-better-buttons_single .mb-2.ng-star-inserted {
+    .me-2.flex-shrink-0.text-secondary {
+      display: none !important;
+    }
+    p.m-0 {
+      background-color: color.$row-hover;
+      // width: 100%;
+      padding: 0.5rem 1rem;
+      border-radius: style.$border-radius;
+      margin-bottom: 0.25rem !important;
+    }
+    b {
+      display: none;
+    }
+  }
+
+  .hw-better-buttons_single .mdc-text-field__input {
+    min-height: 140px;
+  }
+
+  .hw-better-buttons_single mat-button-toggle-group {
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem !important;
+  }
 }
 
 #zip-entries-table {

@@ -1,4 +1,5 @@
-// Přidejte tuto deklaraci na začátek souboru
+// file name: loading.ts
+
 declare global {
   interface Window {
     progressBarObserver: MutationObserver | null;
@@ -125,7 +126,10 @@ function handleUrlChange(url: string, urlHandlers: UrlHandlers) {
 }
 
 function handleSpecificUrl(url: string, urlHandlers: UrlHandlers) {
-  const specificHandler = urlHandlers[url];
+  const parsedUrl = new URL(url);
+  const fullUrlWithoutQuery = parsedUrl.origin + parsedUrl.pathname;
+
+  const specificHandler = urlHandlers[fullUrlWithoutQuery];
   if (specificHandler) {
     observeProgressBar(() => specificHandler(url), window.navigationId);
   } else {
