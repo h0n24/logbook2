@@ -183,6 +183,72 @@ html .mat-body[style] app-attendance {
       @include include.replace-text("Online", 5ch);
     }
   }
+
+  // vyřeší zaokrouhlení nezvolených tlačítek
+  .mat-button-toggle-group-appearance-standard
+    .mat-button-toggle-appearance-standard
+    + .mat-button-toggle-appearance-standard {
+    // reset original
+    border-left: none;
+
+    &:before {
+      // left border gray
+      content: "";
+      display: block;
+      width: 1px;
+      height: calc(100% - 10px);
+
+      position: absolute;
+      left: -4px;
+      top: 5px;
+      bottom: 5px;
+
+      background-color: color.$table-border;
+    }
+  }
+
+  // max diamantů
+  .fs-6 {
+    font-size: 13px !important;
+  }
+
+  .mat-mdc-radio-button.mat-mdc-radio-button .mdc-form-field > label {
+    cursor: pointer;
+  }
+
+  // avatar zooming
+
+  .mat-column-fio_stud {
+    overflow: visible;
+  }
+  .mat-column-fio_stud div {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+
+  .avatar {
+    position: relative;
+    width: 24px;
+    height: 24px;
+  }
+
+  .avatar__preview {
+    position: absolute;
+    right: -10px;
+    z-index: 1;
+
+    &[src="/assets/icons/manager.svg"]:hover {
+      width: auto;
+      height: auto;
+    }
+
+    &:not([src="/assets/icons/manager.svg"]):hover {
+      width: 5rem;
+      height: 5rem;
+    }
+  }
 }
 
 // own functionality
@@ -194,8 +260,25 @@ html .mat-body[style] app-attendance {
   background-color: transparent;
   opacity: 0.5;
   transition: opacity 0.3s ease-in;
+  height: 36px;
+  width: 36px;
+  border-radius: style.$border-radius;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     opacity: 1;
+    background-color: color.$secondary-alt-hover;
   }
+}
+
+#set-all-to-12-button {
+  &:hover {
+    background-color: color.$secondary-alt-hover;
+  }
+}
+
+.hide-unnecessary-mark-row {
+  display: none !important;
 }

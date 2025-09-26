@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@zip.js/zip.js": "^2.7.41"
+    "@zip.js/zip.js": "^2.7.41",
+    "fuse.js": "^7.1.0"
   }
 }

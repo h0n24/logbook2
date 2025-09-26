@@ -743,14 +743,14 @@ function selectValueInMatSelect(
     matSelect.click();
 
     // Čekáme, než se panel otevře
-    const panelClass = ".mat-mdc-select-panel";
+    const panelClass = "mat-dialog-container";
     const timeout = 200; // Může být upraveno dle potřeby
 
     setTimeout(() => {
       const panels = document.querySelectorAll(panelClass);
 
       if (panels.length === 0) {
-        // console.error("Žádný .mat-mdc-select-panel nebyl nalezen");
+        // console.error("Žádný mat-dialog-container nebyl nalezen");
         return resolve();
       }
 
@@ -758,7 +758,7 @@ function selectValueInMatSelect(
       const panel = panels[panels.length - 1];
 
       // Nalezení mat-option s požadovanou hodnotou
-      const matOptions = panel.querySelectorAll("mat-option");
+      const matOptions = panel.querySelectorAll("app-grade-control button");
       let desiredOption: HTMLElement | null = null;
 
       matOptions.forEach((option) => {
@@ -768,14 +768,29 @@ function selectValueInMatSelect(
       });
 
       if (!desiredOption) {
-        console.error(`Nebyla nalezena mat-option s textem "${value}"`);
+        console.error(`Nebyla nalezena app-grade-control s textem "${value}"`);
         // Zavřeme panel
         matSelect.click();
+
         return resolve();
       }
 
       // Kliknutí na požadovanou možnost
       (desiredOption as HTMLElement).click();
+
+      // klikneme na Aplikovat
+      const timeoutApply = 200; // Může být upraveno dle potřeby
+
+      // počkáme 200ms
+      setTimeout(() => {
+        // klikneme na Aplikovat
+        const applyButton = panel.querySelector(
+          "mat-dialog-actions button.mat-primary"
+        ) as HTMLElement;
+        if (applyButton) {
+          applyButton.click();
+        }
+      }, timeoutApply);
 
       // mat-select by se měl automaticky zavřít po výběru možnosti
       resolve();
@@ -821,7 +836,7 @@ function addGiveAll12ButtonToPage() {
 
 async function setAllSelectsTo12() {
   const selects = document.querySelectorAll(
-    ".mat-column-mark4 mat-form-field mat-select"
+    ".mat-column-mark4 div:not(.locked) .ng-star-inserted"
   );
 
   if (selects.length === 0) {
@@ -831,9 +846,7 @@ async function setAllSelectsTo12() {
 
   for (const matSelect of selects) {
     // Kontrola, zda již má hodnotu '12'
-    const selectedValue = (matSelect as HTMLElement)
-      .querySelector(".mat-select-value-text")
-      ?.textContent?.trim();
+    const selectedValue = (matSelect as HTMLElement).textContent?.trim();
     if (selectedValue === "12") {
       continue; // Přeskočíme, pokud již má hodnotu '12'
     }
@@ -912,6 +925,48 @@ function preparePageWrongTranslations(
   } catch (error) {}
 }
 
+function addToggleButtonForMarkRows(markRows: NodeListOf<Element>) {
+  // skip adding button if it already exists
+  const buttonExists = document.querySelector(
+    ".students-table .mat-column-actions button"
+  );
+  if (buttonExists) return;
+
+  const actionsColumn = document.querySelector(
+    ".students-table .mat-column-actions"
+  ) as HTMLElement;
+  if (!actionsColumn) return;
+
+  const button = document.createElement("button");
+  button.innerHTML = "+";
+  button.classList.add(
+    "mdc-icon-button",
+    "mat-mdc-icon-button",
+    "mat-unthemed",
+    "mat-mdc-button-base",
+    "ng-star-inserted"
+  );
+  button.title = "Zobrazit/skrýt nepotřebné řádky známkování";
+  button.addEventListener("click", () => {
+    button.innerHTML = button.innerHTML === "+" ? "-" : "+";
+    markRows.forEach((markRow) => {
+      markRow.classList.toggle("hide-unnecessary-mark-row");
+    });
+  });
+  actionsColumn.appendChild(button);
+}
+
+function hideUnnecessaryMarkRows() {
+  const markRows = document.querySelectorAll(
+    ".mat-column-mark2, .mat-column-mark3"
+  );
+  markRows.forEach((markRow) => {
+    markRow.classList.add("hide-unnecessary-mark-row");
+  });
+
+  addToggleButtonForMarkRows(markRows);
+}
+
 // Aktualizace funkce attendance
 export function attendance() {
   // console.log("Inicializace attendance funkcí.");
@@ -919,8 +974,10 @@ export function attendance() {
 
   preparePageWithCustomSelectors();
 
-  addContextMenuForEachSelect();
+  // addContextMenuForEachSelect();
   addGiveAll12ButtonToPage();
+
+  hideUnnecessaryMarkRows();
 
   printTable();
 }

@@ -118,3 +118,44 @@ export function trapAddEventListeners() {
     };
   })();
 }
+
+// Global function for authenticated API requests
+export async function fetchApiDataWithToken(url: string) {
+  try {
+    // Get the access_token that we know works
+    const token =
+      localStorage.getItem("access_token") ||
+      sessionStorage.getItem("access_token");
+
+    if (!token) {
+      // console.log("No access_token found");
+      return null;
+    }
+
+    // console.log("Using access_token for API request");
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error(
+        "API request failed:",
+        response.status,
+        response.statusText
+      );
+      return null;
+    }
+
+    const data = await response.json();
+    // console.log("Materials data from API:", data);
+    return data;
+  } catch (error) {
+    // console.error("Error fetching materials data:", error);
+    return null;
+  }
+}

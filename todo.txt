@@ -2,7 +2,9 @@ TODO - recreate from the version 1:
 
 - rework background.js and background-auto.ts
 
-
+- přidat sdílení dat mezi rozšířeními - zadávání vlastních domácích úkolů + jejich správa (a možnosti zálohy)
+https://stackoverflow.com/questions/4901024/how-to-synchronize-chrome-extension-data-on-different-computers
++ možnost evidovat studenty a jejich pořadí (kopie co mám na gdocs) + snadné kopírování diamantů do přehledu
 
 ----
 

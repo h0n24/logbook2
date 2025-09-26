@@ -1,0 +1,131 @@
+@use "abstracts/color";
+@use "abstracts/style";
+
+html .mat-body[style] app-materials-bind {
+  .sticky-table-header:has(lib-no-data) {
+    display: none;
+  }
+
+  .sticky-table-header.is-sticky.sin-scrollbar {
+    max-height: 100% !important;
+    margin-bottom: 2rem;
+  }
+
+  .mdc-data-table__table {
+    min-width: fit-content;
+  }
+
+  // hide empty rows ------------------
+
+  .page-filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  // custom functionality from javascript
+  .hide-empty-rows tbody .hidden-row {
+    display: none !important;
+  }
+
+  .hide-empty-rows tbody .last-visible-row td {
+    border-bottom: none !important;
+  }
+
+  .hide-empty-rows thead .hidden-column {
+    display: none !important;
+  }
+
+  .hide-empty-rows tbody .hidden-column {
+    display: none !important;
+  }
+
+  .hide-empty-rows-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+
+    input[type="checkbox"] {
+      margin: 0;
+      accent-color: color.$primary;
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+}
+
+.logbook-rework-better-search__input {
+  width: 100%;
+  max-width: 56rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid color.$table-border;
+  border-radius: style.$border-radius;
+  margin-bottom: 2rem;
+
+  font-size: 14px;
+
+  position: sticky;
+  top: 50px;
+  z-index: 11;
+
+  &::placeholder {
+    // font-weight: 500;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: color.$primary;
+    box-shadow: 0 0 0 0.3rem rgba(color.$primary, 0.1);
+  }
+}
+
+.logbook-rework-better-search {
+  min-height: calc(100vh - 176px);
+}
+
+.logbook-rework-better-search__table {
+  width: 100%;
+  margin-bottom: 2rem;
+
+  td,
+  th {
+    padding: 0.5rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid color.$table-border;
+  }
+
+  thead {
+    z-index: 13;
+    position: sticky;
+    top: 110px;
+  }
+
+  thead tr {
+    background-color: #fff;
+  }
+  tbody tr:hover {
+    background-color: color.$row-hover;
+  }
+
+  td {
+    cursor: pointer;
+  }
+}
+
+.logbook-rework-better-search__table-th-note {
+  cursor: help;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: color.$inputs;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
+.logbook-rework-better-search__table-td-primary {
+  font-weight: 500;
+}
