@@ -41,6 +41,7 @@ export const seniorAcademyOrder = [
   {
     year: 2,
     theme: 9,
+    additional_search_text: "JavaScript",
     translate_key: "Veb-dizajn_-_Middle__JavaScript___MAK_",
   },
 

@@ -36,6 +36,412 @@ let progressBarObserver: MutationObserver | null = null;
 let progressBarShown: boolean = false;
 
 /**
+ * Inicializuje event listener pro lib-expanded-select[formcontrolname="id_form"]
+ */
+function initializeFormSelectListener() {
+  const formSelect = document.querySelector(
+    'lib-expanded-select[formcontrolname="id_form"]'
+  );
+
+  if (!formSelect) {
+    console.log("Form select element not found, will retry...");
+    // Retry after a short delay
+    setTimeout(initializeFormSelectListener, 1000);
+    return;
+  }
+
+  console.log("Form select element found, adding change listener");
+
+  // Add click event listener
+  formSelect.addEventListener("click", async (event) => {
+    console.log("Form select clicked");
+
+    // Wait for cdk-overlay-pane to appear
+    const waitForOverlay = () => {
+      return new Promise<void>((resolve) => {
+        const checkOverlay = () => {
+          const overlay = document.querySelector(".cdk-overlay-pane");
+          if (overlay) {
+            console.log("cdk-overlay-pane found");
+            resolve();
+          } else {
+            setTimeout(checkOverlay, 100);
+          }
+        };
+        checkOverlay();
+      });
+    };
+
+    try {
+      await waitForOverlay();
+
+      // Add click listener to mat-option elements in the overlay
+      const overlay = document.querySelector(".cdk-overlay-pane");
+      if (overlay) {
+        const matOptions = overlay.querySelectorAll("mat-option");
+
+        matOptions.forEach((option) => {
+          option.addEventListener("click", async (clickEvent) => {
+            const optionText = option.textContent?.trim();
+            console.log("Mat-option clicked:", optionText);
+
+            if (!optionText) {
+              console.log("No option text found");
+              return;
+            }
+
+            // Get forms data and translate data from localStorage
+            const formsData = JSON.parse(
+              localStorage.getItem(
+                "logbook-rework-materials-data-get-public-form"
+              ) || "[]"
+            );
+            const translateData = JSON.parse(
+              localStorage.getItem("logbook-rework-translate-data") || "{}"
+            );
+
+            // Find matching form by translating backwards
+            let matchingForm: any = null;
+
+            // First try direct match
+            matchingForm = formsData.find(
+              (form: any) => form.name_form === optionText
+            );
+
+            // If no direct match, try reverse translation
+            if (!matchingForm) {
+              console.log(
+                "No direct match found, trying reverse translation for:",
+                optionText
+              );
+
+              // Find form where translated name matches optionText
+              matchingForm = formsData.find((form: any) => {
+                const translatedName = translateData[form.translate_key];
+                return translatedName === optionText;
+              });
+            }
+
+            if (!matchingForm) {
+              console.log("No matching form found for:", optionText);
+              console.log(
+                "Available forms:",
+                formsData.map((f: any) => ({
+                  name_form: f.name_form,
+                  translate_key: f.translate_key,
+                  translated_name: translateData[f.translate_key],
+                }))
+              );
+              return;
+            }
+
+            console.log("Found matching form:", matchingForm);
+            const formId = matchingForm.id_form;
+
+            // Fetch new data for the selected form
+            await fetchMaterialsDataForForm(formId);
+
+            // Recreate translated data and refresh table
+            refreshMaterialsTable();
+          });
+        });
+      }
+    } catch (error) {
+      console.error("Error waiting for overlay:", error);
+    }
+  });
+}
+
+/**
+ * Inicializuje event listener pro lib-expanded-select[formcontrolname="id_spec"]
+ */
+function initializeSpecSelectListener() {
+  const specSelect = document.querySelector(
+    'lib-expanded-select[formcontrolname="id_spec"]'
+  );
+
+  if (!specSelect) {
+    console.log("Spec select element not found, will retry...");
+    // Retry after a short delay
+    setTimeout(initializeSpecSelectListener, 1000);
+    return;
+  }
+
+  console.log("Spec select element found, adding click listener");
+
+  // Add click event listener
+  specSelect.addEventListener("click", async (event) => {
+    console.log("Spec select clicked");
+
+    // Wait for cdk-overlay-pane with listbox to appear
+    const waitForSpecOverlay = () => {
+      return new Promise<void>((resolve) => {
+        const checkOverlay = () => {
+          const overlay = document.querySelector(
+            ".cdk-overlay-pane div[role='listbox']"
+          );
+          if (overlay) {
+            console.log("Spec cdk-overlay-pane with listbox found");
+            resolve();
+          } else {
+            setTimeout(checkOverlay, 100);
+          }
+        };
+        checkOverlay();
+      });
+    };
+
+    try {
+      await waitForSpecOverlay();
+
+      // Add click listener to mat-option elements in the spec overlay
+      const overlay = document.querySelector(
+        ".cdk-overlay-pane div[role='listbox']"
+      );
+      if (overlay) {
+        const matOptions = overlay.querySelectorAll("mat-option");
+
+        matOptions.forEach((option) => {
+          option.addEventListener("click", async (clickEvent) => {
+            const optionText = option.textContent?.trim();
+            console.log("Spec mat-option clicked:", optionText);
+
+            if (!optionText) {
+              console.log("No spec option text found");
+              return;
+            }
+
+            // Get materials data and translate data from localStorage
+            const materialsData = JSON.parse(
+              localStorage.getItem(
+                "logbook-rework-materials-data-get-public-spec"
+              ) || "[]"
+            );
+            const translateData = JSON.parse(
+              localStorage.getItem("logbook-rework-translate-data") || "{}"
+            );
+
+            // Find matching material by translating backwards
+            let matchingMaterial: any = null;
+
+            // First try direct match
+            matchingMaterial = materialsData.find(
+              (material: any) => material.name_spec === optionText
+            );
+
+            // If no direct match, try reverse translation
+            if (!matchingMaterial) {
+              console.log(
+                "No direct match found, trying reverse translation for spec:",
+                optionText
+              );
+
+              // Find material where translated name matches optionText
+              matchingMaterial = materialsData.find((material: any) => {
+                const translatedName = translateData[material.translate_key];
+                return translatedName === optionText;
+              });
+            }
+
+            if (!matchingMaterial) {
+              console.log("No matching material found for:", optionText);
+              console.log(
+                "Available materials:",
+                materialsData.map((m: any) => ({
+                  name_spec: m.name_spec,
+                  translate_key: m.translate_key,
+                  translated_name: translateData[m.translate_key],
+                }))
+              );
+              return;
+            }
+
+            console.log("Found matching material:", matchingMaterial);
+
+            // Set pending selection for global observer
+            pendingMaterialSelection =
+              translateData[matchingMaterial.translate_key] ||
+              matchingMaterial.name_spec;
+            console.log(
+              "Set pending material selection:",
+              pendingMaterialSelection
+            );
+
+            // Initialize global observer if not already done
+            initializeGlobalObserver();
+          });
+        });
+      }
+    } catch (error) {
+      console.error("Error waiting for spec overlay:", error);
+    }
+  });
+}
+
+/**
+ * Získá formId z URL parametrů
+ */
+function getFormIdFromUrl(): number | null {
+  const urlParams = new URLSearchParams(window.location.search);
+  const formIdParam = urlParams.get("id_form");
+
+  if (formIdParam) {
+    const formId = parseInt(formIdParam);
+    if (!isNaN(formId)) {
+      console.log("Found formId in URL:", formId);
+      return formId;
+    }
+  }
+
+  console.log("No valid formId found in URL, will use default");
+  return null;
+}
+
+/**
+ * Načte data materiálů pro konkrétní formId
+ */
+async function fetchMaterialsDataForForm(formId: number) {
+  try {
+    console.log("Fetching materials data for form ID:", formId);
+
+    // get config data from localStorage
+    const xLanguage = localStorage?.getItem("X-Language") || "cs";
+    let city = "brno";
+
+    if (xLanguage === "sk") {
+      city = "brat";
+    }
+
+    // Get directions data for the specific form
+    const directionsData = await incl.fetchApiDataWithToken(
+      `https://lbapi.itstep.org/v1/logbook/${city}/bind/get-public-direction?id_form=${formId}`
+    );
+
+    if (!directionsData) {
+      console.log("Failed to fetch directions data for form:", formId);
+      return;
+    }
+
+    console.log(
+      "Successfully fetched directions data for form:",
+      formId,
+      directionsData
+    );
+
+    // Save directions data to localStorage
+    localStorage.setItem(
+      "logbook-rework-materials-data-get-public-direction",
+      JSON.stringify(directionsData)
+    );
+
+    // Get materials data for the specific form
+    const materialsData = await incl.fetchApiDataWithToken(
+      `https://lbapi.itstep.org/v1/logbook/${city}/bind/get-public-spec?id_form=${formId}`
+    );
+
+    if (!materialsData) {
+      console.log("Failed to fetch materials data for form:", formId);
+      return;
+    }
+
+    console.log(
+      "Successfully fetched materials data for form:",
+      formId,
+      materialsData
+    );
+
+    // Save materials data to localStorage
+    localStorage.setItem(
+      "logbook-rework-materials-data-get-public-spec",
+      JSON.stringify(materialsData)
+    );
+  } catch (error) {
+    console.error("Error in fetchMaterialsDataForForm:", error);
+  }
+}
+
+/**
+ * Obnoví tabulku materiálů s novými daty
+ */
+function refreshMaterialsTable() {
+  console.log("Refreshing materials table with new data");
+
+  // Recreate translated materials data
+  translatedMaterialsData = createTranslatedMaterialsData();
+
+  if (!translatedMaterialsData.length) {
+    console.warn("No translated materials data available for refresh");
+    return;
+  }
+
+  console.log("Refreshed translated materials data:", translatedMaterialsData);
+
+  // Find the existing table container
+  const tableContainer = document.querySelector(
+    ".logbook-rework-better-search"
+  );
+
+  if (!tableContainer) {
+    console.log("Table container not found, creating new one");
+    createOwnMaterialsData();
+    return;
+  }
+
+  // Recreate the table with new data
+  createMaterialsTable(tableContainer as HTMLElement, translatedMaterialsData);
+
+  // Update the search functionality
+  const input = tableContainer.querySelector(
+    "#logbook-rework-better-search__input"
+  ) as HTMLInputElement;
+  if (input) {
+    // Clear the search input
+    input.value = "";
+
+    // Recreate Fuse.js instance with new data
+    const fuse = new Fuse(translatedMaterialsData, {
+      includeScore: true,
+      threshold: 0.4,
+      keys: [
+        "short_name_spec",
+        "name_spec",
+        "translated_name_spec",
+        "direction_name",
+        "translated_direction_name",
+        "additional_search_text",
+        "searchable_text",
+      ],
+      ignoreLocation: true,
+      findAllMatches: true,
+      minMatchCharLength: 2,
+    });
+
+    // Update the input event listener
+    input.removeEventListener("input", () => {}); // Remove old listener
+    input.addEventListener("input", (e) => {
+      const searchValue = (e.target as HTMLInputElement).value.trim();
+
+      if (searchValue.length === 0) {
+        createMaterialsTable(
+          tableContainer as HTMLElement,
+          translatedMaterialsData
+        );
+        return;
+      }
+
+      const results = fuse.search(searchValue);
+      const filteredData =
+        results.length > 0 ? results.map((result) => result.item) : [];
+      createMaterialsTable(tableContainer as HTMLElement, filteredData);
+
+      console.log(
+        `Nalezeno ${filteredData.length} výsledků pro "${searchValue}"`
+      );
+    });
+  }
+}
+
+/**
  * Inicializuje globální observer pro sledování mat-progress-bar
  */
 function initializeProgressBarObserver() {
@@ -48,144 +454,23 @@ function initializeProgressBarObserver() {
 
     if (matProgressBar && !progressBarShown) {
       // Progress bar se právě zobrazil
-      console.log("mat-progress-bar detected - waiting for completion");
       progressBarShown = true;
     } else if (!matProgressBar && progressBarShown) {
       // Progress bar zmizel po tom, co se zobrazil
-      console.log("mat-progress-bar disappeared - scrolling to top");
 
       setTimeout(() => {
-        // Find the actual scrollable element inside app-materials-bind
-        const appMaterialsBind = document.querySelector("app-materials-bind");
-        let actualScrollTarget: HTMLElement | null = null;
+        // Find and scroll the wrapper__content element
+        const wrapperContent = document.querySelector(
+          ".wrapper__content"
+        ) as HTMLElement;
 
-        if (appMaterialsBind) {
-          // Look for elements with overflow: auto or scroll AND actually scrollable content
-          const scrollableElements = appMaterialsBind.querySelectorAll("*");
-          for (const element of scrollableElements) {
-            const style = window.getComputedStyle(element);
-            const isOverflowScrollable =
-              style.overflow === "auto" ||
-              style.overflow === "scroll" ||
-              style.overflowY === "auto" ||
-              style.overflowY === "scroll";
-
-            if (isOverflowScrollable) {
-              const isActuallyScrollable =
-                element.scrollHeight > element.clientHeight;
-              console.log(
-                "Checking element:",
-                element.tagName,
-                element.className,
-                "overflow:",
-                style.overflow,
-                "scrollHeight:",
-                element.scrollHeight,
-                "clientHeight:",
-                element.clientHeight,
-                "scrollable:",
-                isActuallyScrollable
-              );
-
-              if (isActuallyScrollable) {
-                actualScrollTarget = element as HTMLElement;
-                console.log(
-                  "Found actually scrollable element:",
-                  element.tagName,
-                  element.className
-                );
-                break;
-              }
-            }
-          }
-        }
-
-        // If no scrollable element found inside app-materials-bind, try to find main scrollable element
-        if (!actualScrollTarget) {
-          console.log(
-            "No scrollable element found inside app-materials-bind, searching globally..."
-          );
-          const globalScrollableElements = document.querySelectorAll("*");
-          for (const element of globalScrollableElements) {
-            const style = window.getComputedStyle(element);
-            const isOverflowScrollable =
-              style.overflow === "auto" ||
-              style.overflow === "scroll" ||
-              style.overflowY === "auto" ||
-              style.overflowY === "scroll";
-
-            if (isOverflowScrollable) {
-              const isActuallyScrollable =
-                element.scrollHeight > element.clientHeight;
-              if (isActuallyScrollable && element.scrollHeight > 500) {
-                // Only consider elements with substantial content
-                actualScrollTarget = element as HTMLElement;
-                console.log(
-                  "Found global scrollable element:",
-                  element.tagName,
-                  element.className,
-                  "scrollHeight:",
-                  element.scrollHeight
-                );
-                break;
-              }
-            }
-          }
-        }
-
-        // Try multiple scroll targets
-        const scrollTargets = [
-          actualScrollTarget,
-          document.querySelector("app-materials-bind"),
-          document.querySelector(".page.parent-sticky-container"),
-          document.querySelector(".page-content"),
-          document.body,
-          document.documentElement,
-        ].filter(Boolean); // Remove null/undefined values
-
-        for (const target of scrollTargets) {
-          if (target) {
-            console.log(
-              "Attempting to scroll:",
-              target.tagName,
-              target.className
-            );
-
-            // Check if element is actually scrollable
-            const isScrollable = target.scrollHeight > target.clientHeight;
-            console.log(
-              "Is scrollable:",
-              isScrollable,
-              "scrollHeight:",
-              target.scrollHeight,
-              "clientHeight:",
-              target.clientHeight
-            );
-
-            // Try scrollTo method
-            if (typeof target.scrollTo === "function") {
-              target.scrollTo({
-                top: 0,
-                behavior: "smooth",
-              });
-              console.log("Scrolled using scrollTo method");
-
-              // Check if scroll actually happened
-              setTimeout(() => {
-                console.log("Scroll position after:", target.scrollTop);
-              }, 100);
-              break;
-            }
-
-            // Try scrollTop property
-            if ("scrollTop" in target) {
-              console.log("Scroll position before:", target.scrollTop);
-              target.scrollTop = 0;
-              console.log("Scrolled using scrollTop property");
-              console.log("Scroll position after:", target.scrollTop);
-              break;
-            }
-          }
+        if (wrapperContent) {
+          wrapperContent.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        } else {
+          // console.log("wrapper__content not found");
         }
 
         // Reset state for next time
@@ -199,8 +484,6 @@ function initializeProgressBarObserver() {
     childList: true,
     subtree: true,
   });
-
-  console.log("Global ProgressBar MutationObserver initialized");
 }
 
 /**
@@ -212,60 +495,124 @@ function initializeGlobalObserver() {
   }
 
   globalObserver = new MutationObserver(() => {
-    // Pouze kontrolovat existenci mat-dialog-container
+    // Kontrolovat existenci mat-dialog-container nebo cdk-overlay-pane s listbox
     const dialogContainer = document.querySelector("mat-dialog-container");
-    if (dialogContainer && pendingMaterialSelection) {
-      console.log("Dialog container detected via Global MutationObserver");
+    const specOverlay = document.querySelector(
+      ".cdk-overlay-pane div[role='listbox']"
+    );
 
-      // PROBLEM + SOLUTION:
-      // bohužel některé možnosti v mat-dialog-container se zobrazí až poté, co se začne scrollovat v elementu nadřazeném pro mat-list-option se jménem cdk-virtual-scroll-viewport, proto je třeba vytvořit programovatelný scrollování, které nascrolluje na konec
+    if ((dialogContainer || specOverlay) && pendingMaterialSelection) {
+      console.log(
+        "Overlay detected:",
+        dialogContainer ? "dialog" : "spec listbox"
+      );
 
-      const cdkVirtualScrollViewport = document.querySelector(
-        "cdk-virtual-scroll-viewport"
-      ) as HTMLElement;
+      if (dialogContainer) {
+        // Handle mat-dialog-container (original logic)
+        // PROBLEM + SOLUTION:
+        // bohužel některé možnosti v mat-dialog-container se zobrazí až poté, co se začne scrollovat v elementu nadřazeném pro mat-list-option se jménem cdk-virtual-scroll-viewport, proto je třeba vytvořit programovatelný scrollování, které nascrolluje na konec
 
-      // we need to do a for loop and scroll multiple times, eg. 5 times by 20%
-      for (let i = 0; i < 5; i++) {
-        // wait 200ms
-        setTimeout(() => {
+        const cdkVirtualScrollViewport = document.querySelector(
+          "cdk-virtual-scroll-viewport"
+        ) as HTMLElement;
+
+        if (cdkVirtualScrollViewport) {
+          console.log("Found cdk-virtual-scroll-viewport, scrolling to bottom");
+
+          // Scroll to bottom in one smooth operation
           cdkVirtualScrollViewport.scrollTo({
-            top: cdkVirtualScrollViewport.scrollHeight * (i + 1) * 0.2,
+            top: cdkVirtualScrollViewport.scrollHeight,
             behavior: "smooth",
           });
-        }, 200 * i);
-      }
 
-      // Hledat mat-list-option elementy
-      const matListOptions = document.querySelectorAll(
-        "mat-list-option"
-      ) as NodeListOf<HTMLElement>;
+          // Wait a bit for content to load, then try to find options
+          setTimeout(() => {
+            console.log("Scroll completed, looking for mat-list-options");
+          }, 500);
+        } else {
+          console.log("cdk-virtual-scroll-viewport not found, skipping scroll");
+        }
 
-      if (matListOptions.length > 0) {
-        // console.log("Mat list options found:", matListOptions.length);
+        // Hledat mat-list-option elementy s retry mechanismem
+        const findAndClickMatListOptions = () => {
+          const matListOptions = document.querySelectorAll(
+            "mat-list-option"
+          ) as NodeListOf<HTMLElement>;
 
-        // Použít for...of místo forEach pro možnost break
-        for (const option of matListOptions) {
-          let optionTextContentValue = option.textContent?.trim();
-          let pendingMaterialSelectionValue = pendingMaterialSelection?.trim();
+          if (matListOptions.length > 0) {
+            console.log("Found mat-list-options:", matListOptions.length);
 
-          // console.log("Option text content:", optionTextContentValue);
-          // console.log(
-          //   "Pending material selection:",
-          //   pendingMaterialSelectionValue
-          // );
+            // Použít for...of místo forEach pro možnost break
+            for (const option of matListOptions) {
+              let optionTextContentValue = option.textContent?.trim();
+              let pendingMaterialSelectionValue =
+                pendingMaterialSelection?.trim();
 
-          if (optionTextContentValue === pendingMaterialSelectionValue) {
-            // console.warn("Found matching option, clicking...");
-            option.click();
+              if (optionTextContentValue === pendingMaterialSelectionValue) {
+                console.log("Found matching dialog option, clicking...");
+                option.click();
 
-            // Inicializovat globální progress bar observer pokud ještě neexistuje
-            initializeProgressBarObserver();
+                // Inicializovat globální progress bar observer pokud ještě neexistuje
+                initializeProgressBarObserver();
 
-            // Vyčistit pending selection
-            // console.log("Clearing pending material selection");
-            pendingMaterialSelection = null;
-            // stop processing the loop
-            break;
+                // Vyčistit pending selection
+                pendingMaterialSelection = null;
+                // stop processing the loop
+                return true; // Success
+              }
+            }
+            return false; // No match found
+          } else {
+            console.log("No mat-list-options found yet");
+            return false; // Not found yet
+          }
+        };
+
+        // Try to find options immediately
+        if (!findAndClickMatListOptions()) {
+          // If not found, retry after scroll delay
+          setTimeout(() => {
+            if (!findAndClickMatListOptions()) {
+              console.log(
+                "Still no mat-list-options found after scroll, giving up"
+              );
+            }
+          }, 1000);
+        }
+      } else if (specOverlay) {
+        // Handle spec overlay with mat-option elements
+        const matOptions = specOverlay.querySelectorAll(
+          "mat-option"
+        ) as NodeListOf<HTMLElement>;
+
+        if (matOptions.length > 0) {
+          console.log("Found mat-options in spec overlay:", matOptions.length);
+
+          // Použít for...of místo forEach pro možnost break
+          for (const option of matOptions) {
+            let optionTextContentValue = option.textContent?.trim();
+            let pendingMaterialSelectionValue =
+              pendingMaterialSelection?.trim();
+
+            console.log(
+              "Checking option:",
+              optionTextContentValue,
+              "against:",
+              pendingMaterialSelectionValue
+            );
+
+            if (optionTextContentValue === pendingMaterialSelectionValue) {
+              console.log("Found matching spec option, clicking...");
+              option.click();
+
+              // Inicializovat globální progress bar observer pokud ještě neexistuje
+              initializeProgressBarObserver();
+
+              // Vyčistit pending selection
+              pendingMaterialSelection = null;
+              // stop processing the loop
+              break;
+            }
           }
         }
       }
@@ -277,10 +624,6 @@ function initializeGlobalObserver() {
     childList: true,
     subtree: true,
   });
-
-  console.log(
-    "Global MutationObserver initialized - watching for mat-dialog-container"
-  );
 }
 
 /**
@@ -478,19 +821,29 @@ async function fetchAllMaterialsData() {
       JSON.stringify(formsData)
     );
 
-    // Step 2: Find form ID for "Junior Computer Academy"
-    const juniorForm = formsData.find(
-      (item: any) => item.name_form === "Junior Computer Academy"
-    );
+    // Step 2: Get formId from URL or default to Junior Computer Academy
+    let formId: number;
+    const urlFormId = getFormIdFromUrl();
 
-    if (!juniorForm) {
-      console.log("Junior Computer Academy form not found");
-      return;
+    if (urlFormId) {
+      formId = urlFormId;
+      console.log("Using formId from URL:", formId);
+    } else {
+      // Fallback to Junior Computer Academy
+      const juniorForm = formsData.find(
+        (item: any) => item.name_form === "Junior Computer Academy"
+      );
+
+      if (!juniorForm) {
+        console.log("Junior Computer Academy form not found");
+        return;
+      }
+
+      formId = juniorForm.id_form || 0;
+      console.log("Using default formId (Junior Computer Academy):", formId);
     }
 
-    const formId = juniorForm.id_form || 0;
-
-    // Step 2: Get directions data
+    // Step 3: Get directions data
     const directionsData = await incl.fetchApiDataWithToken(
       `https://lbapi.itstep.org/v1/logbook/${city}/bind/get-public-direction?id_form=${formId}`
     );
@@ -508,7 +861,7 @@ async function fetchAllMaterialsData() {
       JSON.stringify(directionsData)
     );
 
-    // Step 3: Get materials data for the specific form
+    // Step 4: Get materials data for the specific form
     const materialsData = await incl.fetchApiDataWithToken(
       `https://lbapi.itstep.org/v1/logbook/${city}/bind/get-public-spec?id_form=${formId}`
     );
@@ -748,6 +1101,12 @@ export function materials() {
 
   // Inicializovat globální progress bar observer
   initializeProgressBarObserver();
+
+  // Inicializovat form select listener
+  initializeFormSelectListener();
+
+  // Inicializovat spec select listener
+  initializeSpecSelectListener();
 
   // Wait a bit for the page to load, then fetch all materials data
   setTimeout(() => {
